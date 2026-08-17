@@ -1,41 +1,59 @@
-import { useState } from 'react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ThemeToggle from "../../components/ThemeToggle";
+import profileIcon from "../../assets/Profile.png";
+import { useAuth } from "../../context/AuthContext";
 
-type UserRole = 'customer' | 'freelancer';
-type Occupation = 'tutoring' | 'pet_care' | 'cleaning' | 'photography' | 'fitness' | 'food' | 'garden' | 'home_repair';
+type UserRole = "customer" | "freelancer";
+type Occupation =
+  | "tutoring"
+  | "pet_care"
+  | "cleaning"
+  | "photography"
+  | "fitness"
+  | "food"
+  | "garden"
+  | "home_repair";
 
-const occupationLabels: Record <Occupation, string> = {
-  tutoring: 'Tutoring',
-  pet_care: 'Pet Care',
-  cleaning: 'Cleaning',
-  photography: 'Photography',
-  fitness: 'Fitness Coaching',
-  food: 'Food',
-  garden: 'Garden',
-  home_repair: 'Home Repair',
+const occupationLabels: Record<Occupation, string> = {
+  tutoring: "Tutoring",
+  pet_care: "Pet Care",
+  cleaning: "Cleaning",
+  photography: "Photography",
+  fitness: "Fitness Coaching",
+  food: "Food",
+  garden: "Garden",
+  home_repair: "Home Repair",
 };
 
 export default function Signup() {
+  const { signin } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    mobile_number: '',
-    role: 'customer' as UserRole,
-    occupation: 'tutoring' as Occupation,
-    price_per_hour: '',
-    bio: '',
+    name: "",
+    email: "",
+    password: "",
+    mobile_number: "",
+    role: "customer" as UserRole,
+    occupation: "tutoring" as Occupation,
+    price_per_hour: "",
+    bio: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
   const handleRoleChange = (role: UserRole) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       role,
     }));
@@ -43,18 +61,65 @@ export default function Signup() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
+    signin({
+      name: formData.name,
+      email: formData.email,
+      role: formData.role,
+      avatar: profileIcon,
+    });
+    navigate("/");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h1 className="text-2xl font-bold text-center mb-8">Join Nearish</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center py-8 px-4 sm:py-12 relative transition-colors">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-6 sm:p-8">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">S</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+            SkillSync
+          </h1>
+        </div>
+        {/* Role Selection */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            I am a...
+          </label>
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => handleRoleChange("customer")}
+              className={`flex-1 py-2 px-4 rounded-xl font-medium transition ${
+                formData.role === "customer"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              Customer
+            </button>
+            <button
+              type="button"
+              onClick={() => handleRoleChange("freelancer")}
+              className={`margin-30 flex-1 py-2 px-4 rounded-xl font-medium transition ${
+                formData.role === "freelancer"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+            >
+              Freelancer
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Full Name
             </label>
             <input
@@ -64,13 +129,13 @@ export default function Signup() {
               onChange={handleChange}
               placeholder="John Doe"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Email
             </label>
             <input
@@ -80,13 +145,13 @@ export default function Signup() {
               onChange={handleChange}
               placeholder="you@example.com"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Password
             </label>
             <input
@@ -96,13 +161,13 @@ export default function Signup() {
               onChange={handleChange}
               placeholder="••••••••"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
             />
           </div>
 
           {/* Mobile Number */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Mobile Number
             </label>
             <input
@@ -112,65 +177,36 @@ export default function Signup() {
               onChange={handleChange}
               placeholder="+46 70 123 45 67"
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
             />
           </div>
 
-          {/* Role Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              I am a...
-            </label>
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => handleRoleChange('customer')}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                  formData.role === 'customer'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Customer
-              </button>
-              <button
-                type="button"
-                onClick={() => handleRoleChange('freelancer')}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                  formData.role === 'freelancer'
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                Freelancer
-              </button>
-            </div>
-          </div>
-
           {/* Occupation */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Occupation / Service Type
-            </label>
-            <select
-              name="occupation"
-              value={formData.occupation}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            >
-              {(Object.keys(occupationLabels) as Occupation[]).map(occ => (
-                <option key={occ} value={occ}>
-                  {occupationLabels[occ]}
-                </option>
-              ))}
-            </select>
-          </div>
+          {formData.role === "freelancer" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Occupation / Service Type
+              </label>
+              <select
+                name="occupation"
+                value={formData.occupation}
+                onChange={handleChange}
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+              >
+                {(Object.keys(occupationLabels) as Occupation[]).map((occ) => (
+                  <option key={occ} value={occ}>
+                    {occupationLabels[occ]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Price per hour (only for freelancers) */}
-          {formData.role === 'freelancer' && (
+          {formData.role === "freelancer" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price per Hour (€)
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Price per Hour (SEK)
               </label>
               <input
                 type="number"
@@ -178,17 +214,16 @@ export default function Signup() {
                 value={formData.price_per_hour}
                 onChange={handleChange}
                 placeholder="35"
-                step="0.01"
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
               />
             </div>
           )}
 
           {/* Bio (only for freelancers) */}
-          {formData.role === 'freelancer' && (
+          {formData.role === "freelancer" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Bio (Optional)
               </label>
               <textarea
@@ -197,7 +232,7 @@ export default function Signup() {
                 onChange={handleChange}
                 placeholder="Tell customers about yourself..."
                 rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
               />
             </div>
           )}
@@ -205,11 +240,21 @@ export default function Signup() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition"
+            className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-medium hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
           >
             Create Account
           </button>
         </form>
+
+        <p className="text-center text-gray-500 dark:text-gray-400 mt-6 text-sm">
+          Already have an account?{" "}
+          <a
+            href="/signin"
+            className="text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition"
+          >
+            Sign in
+          </a>
+        </p>
       </div>
     </div>
   );
