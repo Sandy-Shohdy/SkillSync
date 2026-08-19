@@ -82,8 +82,8 @@ export default function Signup() {
       <div className="flex items-center justify-center py-8 px-4 sm:py-12">
         <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-6 sm:p-8">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">S</span>
+            <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+              <span className="text-gray-900 font-bold text-lg">S</span>
             </div>
             <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               SkillSync
@@ -100,7 +100,7 @@ export default function Signup() {
                 onClick={() => handleRoleChange("customer")}
                 className={`flex-1 py-2 px-4 rounded-xl font-medium transition ${
                   formData.role === "customer"
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-amber-500 text-gray-900"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
@@ -111,7 +111,7 @@ export default function Signup() {
                 onClick={() => handleRoleChange("freelancer")}
                 className={`flex-1 py-2 px-4 rounded-xl font-medium transition ${
                   formData.role === "freelancer"
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-amber-500 text-gray-900"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
@@ -133,7 +133,7 @@ export default function Signup() {
                 onChange={handleChange}
                 placeholder="John Doe"
                 required
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
               />
             </div>
 
@@ -149,7 +149,7 @@ export default function Signup() {
                 onChange={handleChange}
                 placeholder="you@example.com"
                 required
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
               />
             </div>
 
@@ -165,7 +165,7 @@ export default function Signup() {
                 onChange={handleChange}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
               />
             </div>
 
@@ -181,7 +181,7 @@ export default function Signup() {
                 onChange={handleChange}
                 placeholder="+46 70 123 45 67"
                 required
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
               />
             </div>
 
@@ -195,7 +195,7 @@ export default function Signup() {
                   name="occupation"
                   value={formData.occupation}
                   onChange={handleChange}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
                 >
                   {(Object.keys(occupationLabels) as Occupation[]).map(
                     (occ) => (
@@ -222,7 +222,7 @@ export default function Signup() {
                     onChange={handleChange}
                     placeholder="e.g. Graphic Design"
                     required
-                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
                   />
                 </div>
               )}
@@ -240,7 +240,7 @@ export default function Signup() {
                   onChange={handleChange}
                   placeholder="35"
                   required
-                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
                 />
               </div>
             )}
@@ -257,7 +257,7 @@ export default function Signup() {
                   onChange={handleChange}
                   placeholder="Tell customers about yourself..."
                   rows={3}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
                 />
               </div>
             )}
@@ -265,7 +265,7 @@ export default function Signup() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-medium hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
+              className="w-full bg-amber-500 text-gray-900 py-2.5 rounded-xl font-medium hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
             >
               Create Account
             </button>
@@ -275,7 +275,7 @@ export default function Signup() {
             Already have an account?{" "}
             <a
               href="/login"
-              className="text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition"
+              className="text-amber-700 dark:text-amber-400 font-semibold hover:text-amber-800 dark:hover:text-amber-300 transition"
             >
               Sign in
             </a>

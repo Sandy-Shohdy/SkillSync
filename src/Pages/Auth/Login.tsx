@@ -50,8 +50,8 @@ export default function Login() {
             {/* Header */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">S</span>
+                <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                  <span className="text-gray-900 font-bold text-lg">S</span>
                 </div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                   SkillSync
@@ -78,7 +78,7 @@ export default function Login() {
                     onChange={handleChange}
                     placeholder="alex@example.com"
                     required
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-300"
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-300"
                   />
                   <img
                     src={emailIcon}
@@ -101,12 +101,12 @@ export default function Login() {
                     onChange={handleChange}
                     placeholder="Enter your password"
                     required
-                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition duration-300"
+                    className="w-full px-4 py-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-300"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3.5 text-gray-400 hover:text-emerald-600 transition"
+                    className="absolute right-3 top-3.5 text-gray-400 hover:text-amber-700 transition"
                   >
                     {showPassword ? (
                       <img
@@ -130,7 +130,7 @@ export default function Login() {
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 accent-emerald-600"
+                    className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 accent-amber-500"
                   />
                   <span className="text-gray-600 dark:text-gray-300">
                     Remember me
@@ -141,7 +141,7 @@ export default function Login() {
               {/* Sign In Button */}
               <button
                 type="submit"
-                className="w-full py-3 px-4 mt-6 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-300 uppercase tracking-wider text-sm"
+                className="w-full py-3 px-4 mt-6 bg-amber-500 text-gray-900 font-semibold rounded-xl hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-300 uppercase tracking-wider text-sm"
               >
                 Sign In
               </button>
@@ -152,7 +152,7 @@ export default function Login() {
               New to SkillSync?{" "}
               <a
                 href="/signup"
-                className="text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition"
+                className="text-amber-700 dark:text-amber-400 font-semibold hover:text-amber-800 dark:hover:text-amber-300 transition"
               >
                 Create an account
               </a>

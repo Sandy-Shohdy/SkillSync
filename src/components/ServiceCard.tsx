@@ -23,10 +23,10 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
     <button
       type="button"
       onClick={() => onSelect(service.id)}
-      className="w-full text-left flex gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-md transition duration-300"
+      className="w-full text-left flex gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition duration-300"
     >
       {/* Thumbnail */}
-      <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-lg flex items-center justify-center text-3xl">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-lg flex items-center justify-center text-3xl">
         {service.categoryIcon}
       </div>
 
@@ -59,8 +59,8 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
             </span>
           </span>
           {service.available && (
-            <span className="flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-full px-2 py-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span className="flex items-center gap-1 text-xs text-amber-800 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-full px-2 py-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
               Available
             </span>
           )}

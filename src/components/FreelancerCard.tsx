@@ -33,7 +33,7 @@ export default function FreelancerCard({
       <p className="text-sm text-gray-600">{freelancer.occupation}</p>
 
       {/* Price */}
-      <p className="text-2xl font-bold text-emerald-600 my-2">
+      <p className="text-2xl font-bold text-amber-700 my-2">
         €{freelancer.price_per_hour}/hour
       </p>
 
@@ -46,7 +46,7 @@ export default function FreelancerCard({
       {/* Book Button */}
       <button
         onClick={() => onBook(freelancer.id)}
-        className="w-full bg-emerald-600 text-white py-2 rounded-lg font-medium hover:bg-emerald-700 transition"
+        className="w-full bg-amber-500 text-gray-900 py-2 rounded-lg font-medium hover:bg-amber-600 transition"
       >
         Book Now
       </button>

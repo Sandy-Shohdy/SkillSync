@@ -11,8 +11,8 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">S</span>
+          <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+            <span className="text-gray-900 font-bold text-sm">S</span>
           </div>
           <span className="text-gray-900 dark:text-white font-bold text-lg hidden sm:inline">
             SkillSync
@@ -27,7 +27,7 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="Search services, skills, or neighbourhoods..."
-            className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-800 transition"
+            className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-800 transition"
           />
         </div>
 

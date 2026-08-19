@@ -21,7 +21,7 @@ export default function Profile() {
           <div className="flex items-center justify-center gap-3">
             <Link
               to="/signup"
-              className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-700 transition"
+              className="px-5 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition"
             >
               Sign Up
             </Link>
@@ -54,7 +54,7 @@ export default function Profile() {
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             {user.email}
           </p>
-          <span className="inline-block mt-3 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-xs font-semibold capitalize">
+          <span className="inline-block mt-3 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-xs font-semibold capitalize">
             {user.role}
           </span>
 

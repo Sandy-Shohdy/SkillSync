@@ -173,7 +173,7 @@ export default function Dashboard() {
                 onClick={() => setActiveCategory(category.key)}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
                   isActive
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-amber-500 text-gray-900"
                     : "bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
@@ -196,7 +196,7 @@ export default function Dashboard() {
           <select
             value={radiusKm}
             onChange={(e) => setRadiusKm(Number(e.target.value))}
-            className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             {RADIUS_OPTIONS.map((km) => (
               <option key={km} value={km}>
@@ -211,7 +211,7 @@ export default function Dashboard() {
           <select
             value={minRating}
             onChange={(e) => setMinRating(Number(e.target.value))}
-            className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
           >
             {RATING_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -229,7 +229,7 @@ export default function Dashboard() {
             aria-checked={availableOnly}
             onClick={() => setAvailableOnly((prev) => !prev)}
             className={`relative w-10 h-6 rounded-full transition ${
-              availableOnly ? "bg-emerald-600" : "bg-gray-300 dark:bg-gray-700"
+              availableOnly ? "bg-amber-500" : "bg-gray-300 dark:bg-gray-700"
             }`}
           >
             <span
