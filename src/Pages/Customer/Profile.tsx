@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
+import SideRail from "../../components/SideRail";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Profile() {
@@ -7,7 +8,8 @@ export default function Profile() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
+        <SideRail />
         <Navbar />
         <div className="max-w-md mx-auto px-4 py-20 text-center">
           <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -24,7 +26,7 @@ export default function Profile() {
               Sign Up
             </Link>
             <Link
-              to="/signin"
+              to="/login"
               className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition"
             >
               Log In
@@ -36,7 +38,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
+      <SideRail />
       <Navbar />
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm text-center">

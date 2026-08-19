@@ -11,7 +11,7 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">S</span>
           </div>
           <span className="text-gray-900 dark:text-white font-bold text-lg hidden sm:inline">
@@ -34,23 +34,26 @@ export default function Navbar() {
         {/* Location */}
         <button
           type="button"
-          className="flex items-center gap-1.5 px-3 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition shrink-0"
+          className="flex items-center justify-center gap-1.5 w-10 h-10 md:w-auto md:px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition shrink-0"
         >
           <span>📍</span>
           <span className="hidden md:inline">Stockholm, Sweden</span>
         </button>
 
-        <ThemeToggle />
+        {/* Theme toggle & profile move to the side rail on sm+ screens */}
+        <div className="sm:hidden shrink-0">
+          <ThemeToggle />
+        </div>
 
         <Link
-          to={user ? "/profile" : "/signin"}
-          className="shrink-0"
+          to={user ? "/profile" : "/login"}
+          className="sm:hidden shrink-0"
           aria-label={user ? "View profile" : "Log in"}
         >
           <img
             src={user?.avatar || defaultAvatar}
             alt={user ? `${user.name}'s profile` : "Log in"}
-            className="w-9 h-9 rounded-full object-cover border border-gray-300 dark:border-gray-700"
+            className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-700"
           />
         </Link>
       </div>

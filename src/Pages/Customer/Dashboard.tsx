@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "../../components/Navbar";
+import SideRail from "../../components/SideRail";
 import ServiceCard, { type Service } from "../../components/ServiceCard";
 
 const CATEGORIES = [
@@ -156,7 +157,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
+      <SideRail />
       <Navbar />
 
       {/* Category Pills */}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ThemeToggle from "../../components/ThemeToggle";
+import Navbar from "../../components/Navbar";
+import SideRail from "../../components/SideRail";
 import profileIcon from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 
@@ -13,7 +14,8 @@ type Occupation =
   | "fitness"
   | "food"
   | "garden"
-  | "home_repair";
+  | "home_repair"
+  | "other";
 
 const occupationLabels: Record<Occupation, string> = {
   tutoring: "Tutoring",
@@ -24,6 +26,7 @@ const occupationLabels: Record<Occupation, string> = {
   food: "Food",
   garden: "Garden",
   home_repair: "Home Repair",
+  other: "Other",
 };
 
 export default function Signup() {
@@ -36,6 +39,7 @@ export default function Signup() {
     mobile_number: "",
     role: "customer" as UserRole,
     occupation: "tutoring" as Occupation,
+    occupation_other: "",
     price_per_hour: "",
     bio: "",
   });
@@ -71,190 +75,212 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center py-8 px-4 sm:py-12 relative transition-colors">
-      <div className="absolute top-4 right-4">
-        <ThemeToggle />
-      </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16 transition-colors">
+      <SideRail />
+      <Navbar />
 
-      <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-6 sm:p-8">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">S</span>
-          </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
-            SkillSync
-          </h1>
-        </div>
-        {/* Role Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-            I am a...
-          </label>
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={() => handleRoleChange("customer")}
-              className={`flex-1 py-2 px-4 rounded-xl font-medium transition ${
-                formData.role === "customer"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-              }`}
-            >
-              Customer
-            </button>
-            <button
-              type="button"
-              onClick={() => handleRoleChange("freelancer")}
-              className={`margin-30 flex-1 py-2 px-4 rounded-xl font-medium transition ${
-                formData.role === "freelancer"
-                  ? "bg-emerald-600 text-white"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-              }`}
-            >
-              Freelancer
-            </button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="John Doe"
-              required
-              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="you@example.com"
-              required
-              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              required
-              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-            />
-          </div>
-
-          {/* Mobile Number */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Mobile Number
-            </label>
-            <input
-              type="tel"
-              name="mobile_number"
-              value={formData.mobile_number}
-              onChange={handleChange}
-              placeholder="+46 70 123 45 67"
-              required
-              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-            />
-          </div>
-
-          {/* Occupation */}
-          {formData.role === "freelancer" && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Occupation / Service Type
-              </label>
-              <select
-                name="occupation"
-                value={formData.occupation}
-                onChange={handleChange}
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
-              >
-                {(Object.keys(occupationLabels) as Occupation[]).map((occ) => (
-                  <option key={occ} value={occ}>
-                    {occupationLabels[occ]}
-                  </option>
-                ))}
-              </select>
+      <div className="flex items-center justify-center py-8 px-4 sm:py-12">
+        <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">S</span>
             </div>
-          )}
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+              SkillSync
+            </h1>
+          </div>
+          {/* Role Selection */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+              I am a...
+            </label>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => handleRoleChange("customer")}
+                className={`flex-1 py-2 px-4 rounded-xl font-medium transition ${
+                  formData.role === "customer"
+                    ? "bg-emerald-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleChange("freelancer")}
+                className={`flex-1 py-2 px-4 rounded-xl font-medium transition ${
+                  formData.role === "freelancer"
+                    ? "bg-emerald-600 text-white"
+                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
+              >
+                Freelancer
+              </button>
+            </div>
+          </div>
 
-          {/* Price per hour (only for freelancers) */}
-          {formData.role === "freelancer" && (
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Price per Hour (SEK)
+                Full Name
               </label>
               <input
-                type="number"
-                name="price_per_hour"
-                value={formData.price_per_hour}
+                type="text"
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
-                placeholder="35"
+                placeholder="John Doe"
                 required
                 className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
               />
             </div>
-          )}
 
-          {/* Bio (only for freelancers) */}
-          {formData.role === "freelancer" && (
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Bio (Optional)
+                Email
               </label>
-              <textarea
-                name="bio"
-                value={formData.bio}
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="Tell customers about yourself..."
-                rows={3}
+                placeholder="you@example.com"
+                required
                 className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
               />
             </div>
-          )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-medium hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
-          >
-            Create Account
-          </button>
-        </form>
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                required
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+              />
+            </div>
 
-        <p className="text-center text-gray-500 dark:text-gray-400 mt-6 text-sm">
-          Already have an account?{" "}
-          <a
-            href="/signin"
-            className="text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition"
-          >
-            Sign in
-          </a>
-        </p>
+            {/* Mobile Number */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Mobile Number
+              </label>
+              <input
+                type="tel"
+                name="mobile_number"
+                value={formData.mobile_number}
+                onChange={handleChange}
+                placeholder="+46 70 123 45 67"
+                required
+                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+              />
+            </div>
+
+            {/* Occupation */}
+            {formData.role === "freelancer" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Occupation / Service Type
+                </label>
+                <select
+                  name="occupation"
+                  value={formData.occupation}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                >
+                  {(Object.keys(occupationLabels) as Occupation[]).map(
+                    (occ) => (
+                      <option key={occ} value={occ}>
+                        {occupationLabels[occ]}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </div>
+            )}
+
+            {/* Custom occupation (only when "Other" is selected) */}
+            {formData.role === "freelancer" &&
+              formData.occupation === "other" && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Specify your occupation
+                  </label>
+                  <input
+                    type="text"
+                    name="occupation_other"
+                    value={formData.occupation_other}
+                    onChange={handleChange}
+                    placeholder="e.g. Graphic Design"
+                    required
+                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                  />
+                </div>
+              )}
+
+            {/* Price per hour (only for freelancers) */}
+            {formData.role === "freelancer" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Price per Hour (SEK)
+                </label>
+                <input
+                  type="number"
+                  name="price_per_hour"
+                  value={formData.price_per_hour}
+                  onChange={handleChange}
+                  placeholder="35"
+                  required
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                />
+              </div>
+            )}
+
+            {/* Bio (only for freelancers) */}
+            {formData.role === "freelancer" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Bio (Optional)
+                </label>
+                <textarea
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleChange}
+                  placeholder="Tell customers about yourself..."
+                  rows={3}
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                />
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-medium hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
+            >
+              Create Account
+            </button>
+          </form>
+
+          <p className="text-center text-gray-500 dark:text-gray-400 mt-6 text-sm">
+            Already have an account?{" "}
+            <a
+              href="/login"
+              className="text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition"
+            >
+              Sign in
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
