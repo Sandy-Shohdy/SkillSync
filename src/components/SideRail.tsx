@@ -60,7 +60,7 @@ export default function SideRail() {
           <img
             src={settingIcon}
             alt=""
-            className="w-7 h-7 opacity-60 dark:invert dark:opacity-70"
+            className="w-7 h-7 opacity-60  dark:opacity-70"
           />
         </button>
       </div>

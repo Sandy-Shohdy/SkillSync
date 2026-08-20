@@ -2,9 +2,9 @@ export interface Service {
   id: string;
   name: string;
   category: string;
-  categoryIcon: string;
+  categoryIcon?: string;
+  categoryImage?: string;
   neighbourhood: string;
-  distanceKm: number;
   rating: number;
   reviewCount: number;
   available: boolean;
@@ -27,7 +27,15 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
     >
       {/* Thumbnail */}
       <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-lg flex items-center justify-center text-3xl">
-        {service.categoryIcon}
+        {service.categoryImage ? (
+          <img
+            src={service.categoryImage}
+            alt=""
+            className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+          />
+        ) : (
+          service.categoryIcon
+        )}
       </div>
 
       {/* Details */}
@@ -38,7 +46,7 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
               {service.name}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              {service.neighbourhood} · {service.distanceKm} km
+              {service.neighbourhood}
             </p>
           </div>
           <div className="text-right shrink-0">

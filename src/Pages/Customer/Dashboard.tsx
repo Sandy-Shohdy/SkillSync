@@ -2,17 +2,25 @@ import { useState } from "react";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import ServiceCard, { type Service } from "../../components/ServiceCard";
+import repairIcon from "../../assets/repair.png";
+import tutoringIcon from "../../assets/tutoring.png";
+import gardenIcon from "../../assets/garden.png";
+import foodIcon from "../../assets/food.png";
+import beautyIcon from "../../assets/beauty.png";
+import cleaningIcon from "../../assets/clean.png";
+import photographyIcon from "../../assets/photographi.png";
+import petCareIcon from "../../assets/petCare.png";
 
 const CATEGORIES = [
   { key: "all", label: "All", icon: "✨" },
-  { key: "repairs", label: "Repairs", icon: "🔧" },
-  { key: "tutoring", label: "Tutoring", icon: "📚" },
-  { key: "food", label: "Food", icon: "🧁" },
-  { key: "beauty", label: "Beauty", icon: "✂️" },
-  { key: "garden", label: "Garden", icon: "🌿" },
-  { key: "cleaning", label: "Cleaning", icon: "🧹" },
-  { key: "photography", label: "Photography", icon: "📷" },
-  { key: "pet_care", label: "Pet Care", icon: "🐾" },
+  { key: "repairs", label: "Repairs", image: repairIcon },
+  { key: "tutoring", label: "Tutoring", image: tutoringIcon },
+  { key: "food", label: "Food", image: foodIcon },
+  { key: "beauty", label: "Beauty", image: beautyIcon },
+  { key: "garden", label: "Garden", image: gardenIcon },
+  { key: "cleaning", label: "Cleaning", image: cleaningIcon },
+  { key: "photography", label: "Photography", image: photographyIcon },
+  { key: "pet_care", label: "Pet Care", image: petCareIcon },
 ];
 
 const SERVICES: Service[] = [
@@ -20,37 +28,34 @@ const SERVICES: Service[] = [
     id: "1",
     name: "Marta's Appliance Repair",
     category: "repairs",
-    categoryIcon: "🔧",
+    categoryImage: repairIcon,
     neighbourhood: "Södermalm",
-    distanceKm: 0.4,
     rating: 4.9,
     reviewCount: 84,
     available: true,
     tags: ["Same-day", "Certified", "Washing machines"],
     price: 45,
-    priceUnit: "per visit",
+    priceUnit: "per hour",
   },
   {
     id: "2",
     name: "Paulo's Guitar Lessons",
     category: "tutoring",
-    categoryIcon: "📚",
+    categoryImage: tutoringIcon,
     neighbourhood: "Östermalm",
-    distanceKm: 0.7,
     rating: 5,
     reviewCount: 41,
     available: true,
     tags: ["Beginners welcome", "Classical & Rock", "Online available"],
     price: 35,
-    priceUnit: "per 60 min",
+    priceUnit: "per hour",
   },
   {
     id: "3",
     name: "Green Thumb Garden Co.",
     category: "garden",
-    categoryIcon: "🌿",
+    categoryImage: gardenIcon,
     neighbourhood: "Vasastan",
-    distanceKm: 1.1,
     rating: 4.8,
     reviewCount: 127,
     available: true,
@@ -62,23 +67,21 @@ const SERVICES: Service[] = [
     id: "4",
     name: "Lena's Home Bakes",
     category: "food",
-    categoryIcon: "🧁",
+    categoryImage: foodIcon,
     neighbourhood: "Kungsholmen",
-    distanceKm: 1.6,
     rating: 4.7,
     reviewCount: 63,
     available: false,
     tags: ["Custom cakes", "Vegan options"],
     price: 30,
-    priceUnit: "starting price",
+    priceUnit: "per hour",
   },
   {
     id: "5",
     name: "Sofia's Nail Studio",
     category: "beauty",
-    categoryIcon: "✂️",
+    categoryImage: beautyIcon,
     neighbourhood: "Gamla Stan",
-    distanceKm: 0.3,
     rating: 4.9,
     reviewCount: 152,
     available: true,
@@ -90,9 +93,8 @@ const SERVICES: Service[] = [
     id: "6",
     name: "Sparkle Clean Stockholm",
     category: "cleaning",
-    categoryIcon: "🧹",
+    categoryImage: cleaningIcon,
     neighbourhood: "Norrmalm",
-    distanceKm: 2.3,
     rating: 4.6,
     reviewCount: 98,
     available: true,
@@ -104,9 +106,8 @@ const SERVICES: Service[] = [
     id: "7",
     name: "Dev's Photo Studio",
     category: "photography",
-    categoryIcon: "📷",
+    categoryImage: photographyIcon,
     neighbourhood: "Djurgården",
-    distanceKm: 3.1,
     rating: 4.9,
     reviewCount: 76,
     available: false,
@@ -118,19 +119,17 @@ const SERVICES: Service[] = [
     id: "8",
     name: "Happy Paws Pet Sitting",
     category: "pet_care",
-    categoryIcon: "🐾",
+    categoryImage: petCareIcon,
     neighbourhood: "Hägersten",
-    distanceKm: 0.9,
     rating: 5,
     reviewCount: 39,
     available: true,
     tags: ["Dog walking", "Overnight stays"],
     price: 18,
-    priceUnit: "per visit",
+    priceUnit: "per hour",
   },
 ];
 
-const RADIUS_OPTIONS = [1, 2, 5, 10, 20];
 const RATING_OPTIONS = [
   { value: 0, label: "Any" },
   { value: 4, label: "4+" },
@@ -139,14 +138,12 @@ const RATING_OPTIONS = [
 
 export default function Dashboard() {
   const [activeCategory, setActiveCategory] = useState("all");
-  const [radiusKm, setRadiusKm] = useState(5);
   const [minRating, setMinRating] = useState(0);
   const [availableOnly, setAvailableOnly] = useState(false);
 
   const filteredServices = SERVICES.filter((service) => {
     if (activeCategory !== "all" && service.category !== activeCategory)
       return false;
-    if (service.distanceKm > radiusKm) return false;
     if (service.rating < minRating) return false;
     if (availableOnly && !service.available) return false;
     return true;
@@ -177,7 +174,15 @@ export default function Dashboard() {
                     : "bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 }`}
               >
-                <span>{category.icon}</span>
+                {"image" in category ? (
+                  <img
+                    src={category.image}
+                    alt=""
+                    className="w-4 h-4 object-contain"
+                  />
+                ) : (
+                  <span>{category.icon}</span>
+                )}
                 {category.label}
               </button>
             );
@@ -190,21 +195,6 @@ export default function Dashboard() {
         <span className="text-gray-500 dark:text-gray-400">
           {filteredServices.length} found
         </span>
-
-        <label className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-          Within
-          <select
-            value={radiusKm}
-            onChange={(e) => setRadiusKm(Number(e.target.value))}
-            className="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-2 py-1.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-          >
-            {RADIUS_OPTIONS.map((km) => (
-              <option key={km} value={km}>
-                {km} km
-              </option>
-            ))}
-          </select>
-        </label>
 
         <label className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
           Min rating
