@@ -140,12 +140,23 @@ export default function Dashboard() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [minRating, setMinRating] = useState(0);
   const [availableOnly, setAvailableOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const query = searchQuery.trim().toLowerCase();
 
   const filteredServices = SERVICES.filter((service) => {
     if (activeCategory !== "all" && service.category !== activeCategory)
       return false;
     if (service.rating < minRating) return false;
     if (availableOnly && !service.available) return false;
+    if (query) {
+      const occupation =
+        CATEGORIES.find((c) => c.key === service.category)?.label ??
+        service.category;
+      const matchesName = service.name.toLowerCase().includes(query);
+      const matchesOccupation = occupation.toLowerCase().includes(query);
+      if (!matchesName && !matchesOccupation) return false;
+    }
     return true;
   });
 
@@ -156,7 +167,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
       <SideRail />
-      <Navbar />
+      <Navbar searchValue={searchQuery} onSearchChange={setSearchQuery} />
 
       {/* Category Pills */}
       <div className="max-w-6xl mx-auto px-4 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">

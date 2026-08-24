@@ -1,10 +1,18 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../context/AuthContext";
 import defaultAvatar from "../assets/Profile.png";
 
-export default function Navbar() {
+interface NavbarProps {
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+}
+
+export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
   const { user } = useAuth();
+  const [localSearch, setLocalSearch] = useState("");
+  const search = searchValue !== undefined ? searchValue : localSearch;
 
   return (
     <header className="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
@@ -26,7 +34,12 @@ export default function Navbar() {
           </span>
           <input
             type="text"
-            placeholder="Search services, skills, or neighbourhoods..."
+            value={search}
+            onChange={(e) => {
+              setLocalSearch(e.target.value);
+              onSearchChange?.(e.target.value);
+            }}
+            placeholder="Search by name or occupation..."
             className="w-full pl-9 pr-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white text-sm placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent focus:bg-white dark:focus:bg-gray-800 transition"
           />
         </div>
