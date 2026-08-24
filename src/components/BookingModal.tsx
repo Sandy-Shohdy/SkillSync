@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Service } from "./ServiceCard";
 
-interface BookingCardProps {
+interface BookingModalProps {
   service: Service;
   onClose: () => void;
   onConfirm: (booking: { date: string; time: string }) => void;
@@ -23,11 +23,11 @@ function todayISO() {
   return new Date().toISOString().split("T")[0];
 }
 
-export default function BookingCard({
+export default function BookingModal({
   service,
   onClose,
   onConfirm,
-}: BookingCardProps) {
+}: BookingModalProps) {
   const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);

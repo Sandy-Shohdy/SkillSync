@@ -2,6 +2,9 @@ import { useState } from "react";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import ServiceCard, { type Service } from "../../components/ServiceCard";
+import BookingCard from "../../components/BookingCard";
+import AuthRequiredModal from "../../components/AuthRequiredModal";
+import { useAuth } from "../../context/AuthContext";
 import repairIcon from "../../assets/repair.png";
 import tutoringIcon from "../../assets/tutoring.png";
 import gardenIcon from "../../assets/garden.png";
@@ -137,6 +140,7 @@ const RATING_OPTIONS = [
 ];
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState("all");
   const [minRating, setMinRating] = useState(0);
   const [availableOnly, setAvailableOnly] = useState(false);
@@ -160,8 +164,18 @@ export default function Dashboard() {
     return true;
   });
 
+  const [selectedService, setSelectedService] = useState<Service | null>(
+    null
+  );
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
   const handleSelect = (serviceId: string) => {
-    console.log("Selected service:", serviceId);
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+    const service = SERVICES.find((s) => s.id === serviceId) ?? null;
+    setSelectedService(service);
   };
 
   return (
@@ -260,6 +274,24 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {selectedService && (
+        <BookingCard
+          service={selectedService}
+          onClose={() => setSelectedService(null)}
+          onConfirm={({ date, time }) => {
+            console.log("Booking confirmed:", {
+              serviceId: selectedService.id,
+              date,
+              time,
+            });
+          }}
+        />
+      )}
+
+      {showAuthPrompt && (
+        <AuthRequiredModal onClose={() => setShowAuthPrompt(false)} />
+      )}
     </div>
   );
 }

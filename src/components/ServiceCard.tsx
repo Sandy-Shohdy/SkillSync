@@ -20,9 +20,7 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(service.id)}
+    <div
       className="w-full text-left flex gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition duration-300"
     >
       {/* Thumbnail */}
@@ -84,7 +82,17 @@ export default function ServiceCard({ service, onSelect }: ServiceCardProps) {
             </span>
           ))}
         </div>
+
+        <div className="flex justify-end mt-3">
+          <button
+            type="button"
+            onClick={() => onSelect(service.id)}
+            className="px-4 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition"
+          >
+            Book Now
+          </button>
+        </div>
       </div>
-    </button>
+    </div>
   );
 }
