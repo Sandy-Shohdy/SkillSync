@@ -16,7 +16,7 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
           <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">

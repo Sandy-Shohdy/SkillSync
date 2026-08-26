@@ -164,9 +164,7 @@ export default function Dashboard() {
     return true;
   });
 
-  const [selectedService, setSelectedService] = useState<Service | null>(
-    null
-  );
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   const handleSelect = (serviceId: string) => {
@@ -193,7 +191,7 @@ export default function Dashboard() {
                 key={category.key}
                 type="button"
                 onClick={() => setActiveCategory(category.key)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${
+                className={`flex items-center gap-1.5 pl-3 pr-5 py-1.5  sm:pl-4 sm:pr-7 sm:py-2 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap transition  ${
                   isActive
                     ? "bg-amber-500 text-gray-900"
                     : "bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -206,7 +204,9 @@ export default function Dashboard() {
                     className="w-4 h-4 object-contain"
                   />
                 ) : (
-                  <span>{category.icon}</span>
+                  <span className="w-4 h-4 flex items-center justify-center text-sm leading-none">
+                    {category.icon}
+                  </span>
                 )}
                 {category.label}
               </button>
