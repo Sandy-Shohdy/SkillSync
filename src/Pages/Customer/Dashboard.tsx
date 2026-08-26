@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import ServiceCard, { type Service } from "../../components/ServiceCard";
@@ -181,8 +182,80 @@ export default function Dashboard() {
       <SideRail />
       <Navbar searchValue={searchQuery} onSearchChange={setSearchQuery} />
 
+      {/* Intro */}
+      <div className="bg-amber-50 dark:bg-amber-900/10 border-b border-amber-100 dark:border-amber-900/40">
+        <div className="max-w-6xl mx-auto px-4 py-10 sm:py-16 flex flex-col lg:flex-row items-center gap-10">
+          <div className="flex-1 text-center lg:text-left">
+            <h1 className="text-3xl sm:text-4xl font-bold leading-tight text-gray-900 dark:text-white">
+              <span className="text-amber-500">Find skilled help</span> near
+              you
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-4 max-w-xl mx-auto lg:mx-0">
+              SkillSync connects you with vetted local pros — repair techs,
+              tutors, cleaners, and more. Browse services, compare ratings,
+              and book a time that works for you.
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mt-6">
+              <Link
+                to={user ? "/profile" : "/signup"}
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition"
+              >
+                Get Started
+              </Link>
+              <a
+                href="#categories"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition text-center"
+              >
+                Browse Services
+              </a>
+            </div>
+          </div>
+
+          {/* Category showcase */}
+          <div className="flex-1 grid grid-cols-4 gap-3 max-w-sm w-full">
+            {CATEGORIES.filter((c) => "image" in c).map((category) => (
+              <div
+                key={category.key}
+                className="aspect-square bg-white dark:bg-gray-900 border border-amber-100 dark:border-amber-800 rounded-2xl flex items-center justify-center shadow-sm"
+              >
+                <img
+                  src={category.image}
+                  alt=""
+                  className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Feature highlights */}
+        <div className="border-t border-amber-100 dark:border-amber-900/40">
+          <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+            {[
+              { icon: "⚡", label: "Fast booking" },
+              { icon: "💰", label: "Fair prices" },
+              { icon: "🔒", label: "Secure payments" },
+              { icon: "⭐", label: "Top rated pros" },
+            ].map((feature) => (
+              <div key={feature.label} className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-xl">
+                  {feature.icon}
+                </div>
+                <span className="text-gray-900 dark:text-white font-semibold text-sm">
+                  {feature.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Category Pills */}
-      <div className="max-w-6xl mx-auto px-4 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <div
+        id="categories"
+        className="sticky top-24 sm:top-16 z-10 max-w-6xl mx-auto px-4 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+      >
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
           {CATEGORIES.map((category) => {
             const isActive = category.key === activeCategory;
@@ -216,7 +289,7 @@ export default function Dashboard() {
       </div>
 
       {/* Filters */}
-      <div className="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center gap-4 text-sm border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      <div className="sticky top-44 sm:top-36 z-10 max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center gap-4 text-sm border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
         <span className="text-gray-500 dark:text-gray-400">
           {filteredServices.length} found
         </span>
