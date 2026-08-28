@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext.tsx";
 import Login from "./Pages/Auth/Login.tsx";
 import Signup from "./Pages/Auth/Signup.tsx";
 import Dashboard from "./Pages/Customer/Dashboard.tsx";
+import BrowseFreelancers from "./Pages/Customer/BrowseFreelancers.tsx";
 import Profile from "./Pages/Customer/Profile.tsx";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/services" element={<BrowseFreelancers />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
