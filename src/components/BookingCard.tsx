@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { Service } from "./ServiceCard";
+import type { PublicFreelancer } from "../lib/api";
 
 interface BookingCardProps {
-  service: Service;
+  freelancer: PublicFreelancer;
   onClose: () => void;
   onConfirm: (booking: { date: string; time: string }) => void;
 }
@@ -24,7 +24,7 @@ function todayISO() {
 }
 
 export default function BookingCard({
-  service,
+  freelancer,
   onClose,
   onConfirm,
 }: BookingCardProps) {
@@ -56,7 +56,7 @@ export default function BookingCard({
               Booking requested
             </h2>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
-              {service.name} on {date} at {time}
+              {freelancer.fullName} on {date} at {time}
             </p>
             <button
               type="button"
@@ -71,12 +71,13 @@ export default function BookingCard({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Book {service.name}
+                  Book {freelancer.fullName}
                 </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  {service.neighbourhood} · SEK {service.price}{" "}
-                  {service.priceUnit}
-                </p>
+                {freelancer.pricePerHour != null && (
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    SEK {freelancer.pricePerHour} per hour
+                  </p>
+                )}
               </div>
               <button
                 type="button"

@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ServicesModule } from './services/services.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './users/entities/user.entity';
 
@@ -24,7 +23,6 @@ import { User } from './users/entities/user.entity';
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),
-    ServicesModule,
     AuthModule,
   ],
   controllers: [AppController],

@@ -114,3 +114,19 @@ export function resolveAssetUrl(
   if (path.startsWith("http")) return path;
   return `${API_URL}${path}`;
 }
+
+export interface PublicFreelancer {
+  id: string;
+  fullName: string;
+  avatarUrl: string | null;
+  category: string | null;
+  pricePerHour: number | null;
+  bio: string | null;
+  skills: string[] | null;
+  createdAt: string;
+}
+
+export async function getFreelancers(): Promise<PublicFreelancer[]> {
+  const response = await fetch(`${API_URL}/freelancers`);
+  return parseJsonOrThrow<PublicFreelancer[]>(response);
+}

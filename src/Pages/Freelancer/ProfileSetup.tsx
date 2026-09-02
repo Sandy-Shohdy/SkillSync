@@ -5,16 +5,12 @@ import SideRail from "../../components/SideRail";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 import { updateProfile } from "../../lib/api";
-import {
-  occupationLabels,
-  occupationKeyFromCategory,
-  type Occupation,
-} from "../../data/occupations";
+import { CATEGORIES, categoryKeyFromValue } from "../../data/categories";
 
 export default function ProfileSetup() {
   const { user, updateUser } = useAuth();
 
-  const initialOccupation = occupationKeyFromCategory(user?.category);
+  const initialOccupation = categoryKeyFromValue(user?.category);
 
   const [formData, setFormData] = useState({
     name: user?.name ?? "",
@@ -141,7 +137,7 @@ export default function ProfileSetup() {
     const category =
       formData.occupation === "other"
         ? formData.occupation_other
-        : occupationLabels[formData.occupation];
+        : formData.occupation;
 
     try {
       const updated = await updateProfile(user.token, {
@@ -231,9 +227,9 @@ export default function ProfileSetup() {
                 onChange={handleChange}
                 className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
               >
-                {(Object.keys(occupationLabels) as Occupation[]).map((occ) => (
-                  <option key={occ} value={occ}>
-                    {occupationLabels[occ]}
+                {CATEGORIES.map((category) => (
+                  <option key={category.key} value={category.key}>
+                    {category.label}
                   </option>
                 ))}
               </select>

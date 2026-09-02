@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import { useAuth, toAuthUser } from "../../context/AuthContext";
 import { signup as signupRequest } from "../../lib/api";
-import { occupationLabels, type Occupation } from "../../data/occupations";
+import { CATEGORIES, type CategoryKey } from "../../data/categories";
 
 type UserRole = "customer" | "freelancer";
 
@@ -17,7 +17,7 @@ export default function Signup() {
     password: "",
     mobile_number: "",
     role: "customer" as UserRole,
-    occupation: "tutoring" as Occupation,
+    occupation: "tutoring" as CategoryKey,
     occupation_other: "",
     price_per_hour: "",
     bio: "",
@@ -53,7 +53,7 @@ export default function Signup() {
       formData.role === "freelancer"
         ? formData.occupation === "other"
           ? formData.occupation_other
-          : occupationLabels[formData.occupation]
+          : formData.occupation
         : undefined;
 
     try {
@@ -202,13 +202,11 @@ export default function Signup() {
                   onChange={handleChange}
                   className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
                 >
-                  {(Object.keys(occupationLabels) as Occupation[]).map(
-                    (occ) => (
-                      <option key={occ} value={occ}>
-                        {occupationLabels[occ]}
-                      </option>
-                    ),
-                  )}
+                  {CATEGORIES.map((category) => (
+                    <option key={category.key} value={category.key}>
+                      {category.label}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}

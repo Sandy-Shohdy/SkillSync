@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
+import { categoryLabelFromValue } from "../../data/categories";
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -64,7 +65,7 @@ export default function Profile() {
               {user.category && (
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                   <span className="font-semibold">Occupation:</span>{" "}
-                  {user.category}
+                  {categoryLabelFromValue(user.category)}
                 </p>
               )}
               {user.pricePerHour != null && (

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import { useAuth } from "../../context/AuthContext";
-import { CATEGORIES } from "../../data/services";
+import { CATEGORIES } from "../../data/categories";
 
 const STATS = [
   { value: "500+", label: "Verified pros" },
