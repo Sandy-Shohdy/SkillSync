@@ -5,8 +5,8 @@ import SideRail from "../../components/SideRail";
 import emailIcon from "../../assets/Email.png";
 import hiddenPassIcon from "../../assets/HiddenPass.png";
 import showPassIcon from "../../assets/ShowPass.png";
-import profileIcon from "../../assets/Profile.png";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, toAuthUser } from "../../context/AuthContext";
+import { login as loginRequest } from "../../lib/api";
 
 export default function Login() {
   const { signin } = useAuth();
@@ -15,6 +15,8 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,15 +28,22 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    signin({
-      name: formData.email.split("@")[0],
-      email: formData.email,
-      role: "customer",
-      avatar: profileIcon,
-    });
-    navigate("/");
+    setError(null);
+    setSubmitting(true);
+    try {
+      const { user, accessToken } = await loginRequest(
+        formData.email,
+        formData.password,
+      );
+      signin(toAuthUser(user, accessToken));
+      navigate("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -138,12 +147,20 @@ export default function Login() {
                 </label>
               </div>
 
+              {/* Error */}
+              {error && (
+                <p className="text-sm text-red-600 dark:text-red-400 text-center">
+                  {error}
+                </p>
+              )}
+
               {/* Sign In Button */}
               <button
                 type="submit"
-                className="w-full py-3 px-4 mt-6 bg-amber-500 text-gray-900 font-semibold rounded-xl hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-300 uppercase tracking-wider text-sm"
+                disabled={submitting}
+                className="w-full py-3 px-4 mt-6 bg-amber-500 text-gray-900 font-semibold rounded-xl hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-300 uppercase tracking-wider text-sm disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Sign In
+                {submitting ? "Signing In..." : "Sign In"}
               </button>
             </form>
 

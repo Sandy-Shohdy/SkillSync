@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
+import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Profile() {
@@ -44,7 +45,7 @@ export default function Profile() {
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm text-center">
           <img
-            src={user.avatar}
+            src={user.avatar || defaultAvatar}
             alt={`${user.name}'s profile`}
             className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border border-gray-300 dark:border-gray-700"
           />
@@ -58,10 +59,53 @@ export default function Profile() {
             {user.role}
           </span>
 
+          {user.role === "freelancer" && (
+            <div className="mt-6 text-left space-y-3">
+              {user.category && (
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold">Occupation:</span>{" "}
+                  {user.category}
+                </p>
+              )}
+              {user.pricePerHour != null && (
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold">Price:</span>{" "}
+                  {user.pricePerHour} SEK/hour
+                </p>
+              )}
+              {user.bio && (
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold">Bio:</span> {user.bio}
+                </p>
+              )}
+              {user.skills && user.skills.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {user.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-xs font-semibold"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {user.role === "freelancer" && (
+            <Link
+              to="/freelancer/profile-setup"
+              className="block w-full mt-8 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold text-center hover:bg-amber-600 transition"
+            >
+              Edit Profile
+            </Link>
+          )}
+
           <button
             type="button"
             onClick={logout}
-            className="w-full mt-8 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+            className="w-full mt-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition"
           >
             Log Out
           </button>

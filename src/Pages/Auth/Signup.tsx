@@ -2,32 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
-import profileIcon from "../../assets/Profile.png";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth, toAuthUser } from "../../context/AuthContext";
+import { signup as signupRequest } from "../../lib/api";
+import { occupationLabels, type Occupation } from "../../data/occupations";
 
 type UserRole = "customer" | "freelancer";
-type Occupation =
-  | "tutoring"
-  | "pet_care"
-  | "cleaning"
-  | "photography"
-  | "fitness"
-  | "food"
-  | "garden"
-  | "home_repair"
-  | "other";
-
-const occupationLabels: Record<Occupation, string> = {
-  tutoring: "Tutoring",
-  pet_care: "Pet Care",
-  cleaning: "Cleaning",
-  photography: "Photography",
-  fitness: "Fitness Coaching",
-  food: "Food",
-  garden: "Garden",
-  home_repair: "Home Repair",
-  other: "Other",
-};
 
 export default function Signup() {
   const { signin } = useAuth();
@@ -43,6 +22,8 @@ export default function Signup() {
     price_per_hour: "",
     bio: "",
   });
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -63,15 +44,39 @@ export default function Signup() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    signin({
-      name: formData.name,
-      email: formData.email,
-      role: formData.role,
-      avatar: profileIcon,
-    });
-    navigate("/");
+    setError(null);
+    setSubmitting(true);
+
+    const category =
+      formData.role === "freelancer"
+        ? formData.occupation === "other"
+          ? formData.occupation_other
+          : occupationLabels[formData.occupation]
+        : undefined;
+
+    try {
+      const { user, accessToken } = await signupRequest({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.name,
+        role: formData.role,
+        phone: formData.mobile_number,
+        bio: formData.role === "freelancer" ? formData.bio || undefined : undefined,
+        category,
+        pricePerHour:
+          formData.role === "freelancer" && formData.price_per_hour
+            ? Number(formData.price_per_hour)
+            : undefined,
+      });
+      signin(toAuthUser(user, accessToken));
+      navigate("/");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -262,12 +267,20 @@ export default function Signup() {
               </div>
             )}
 
+            {/* Error */}
+            {error && (
+              <p className="text-sm text-red-600 dark:text-red-400 text-center">
+                {error}
+              </p>
+            )}
+
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-amber-500 text-gray-900 py-2.5 rounded-xl font-medium hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
+              disabled={submitting}
+              className="w-full bg-amber-500 text-gray-900 py-2.5 rounded-xl font-medium hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Create Account
+              {submitting ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 

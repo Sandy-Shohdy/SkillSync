@@ -5,19 +5,45 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import type { ApiUser } from "../lib/api";
+import { resolveAssetUrl } from "../lib/api";
 
 export type UserRole = "customer" | "freelancer";
 
 export interface AuthUser {
+  id: string;
   name: string;
   email: string;
   role: UserRole;
   avatar: string;
+  token: string;
+  phone: string | null;
+  bio: string | null;
+  category: string | null;
+  pricePerHour: number | null;
+  skills: string[] | null;
+}
+
+export function toAuthUser(apiUser: ApiUser, token: string): AuthUser {
+  return {
+    id: apiUser.id,
+    name: apiUser.fullName,
+    email: apiUser.email,
+    role: apiUser.role,
+    avatar: resolveAssetUrl(apiUser.avatarUrl) ?? "",
+    token,
+    phone: apiUser.phone,
+    bio: apiUser.bio,
+    category: apiUser.category,
+    pricePerHour: apiUser.pricePerHour,
+    skills: apiUser.skills,
+  };
 }
 
 interface AuthContextValue {
   user: AuthUser | null;
   signin: (user: AuthUser) => void;
+  updateUser: (apiUser: ApiUser) => void;
   logout: () => void;
 }
 
@@ -36,9 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     else localStorage.removeItem("authUser");
   }, [user]);
 
+  const updateUser = (apiUser: ApiUser) => {
+    setUser((prev) => (prev ? toAuthUser(apiUser, prev.token) : prev));
+  };
+
   return (
     <AuthContext.Provider
-      value={{ user, signin: setUser, logout: () => setUser(null) }}
+      value={{ user, signin: setUser, updateUser, logout: () => setUser(null) }}
     >
       {children}
     </AuthContext.Provider>

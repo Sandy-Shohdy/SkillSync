@@ -4,6 +4,7 @@ import SideRail from "../../components/SideRail";
 import ServiceCard, { type Service } from "../../components/ServiceCard";
 import BookingCard from "../../components/BookingCard";
 import AuthRequiredModal from "../../components/AuthRequiredModal";
+import FreelancerBookingBlockedModal from "../../components/FreelancerBookingBlockedModal";
 import { useAuth } from "../../context/AuthContext";
 import { CATEGORIES, SERVICES } from "../../data/services";
 
@@ -32,10 +33,15 @@ export default function BrowseFreelancers() {
 
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showFreelancerBlocked, setShowFreelancerBlocked] = useState(false);
 
   const handleSelect = (serviceId: string) => {
     if (!user) {
       setShowAuthPrompt(true);
+      return;
+    }
+    if (user.role === "freelancer") {
+      setShowFreelancerBlocked(true);
       return;
     }
     const service = SERVICES.find((s) => s.id === serviceId) ?? null;
@@ -141,6 +147,12 @@ export default function BrowseFreelancers() {
 
       {showAuthPrompt && (
         <AuthRequiredModal onClose={() => setShowAuthPrompt(false)} />
+      )}
+
+      {showFreelancerBlocked && (
+        <FreelancerBookingBlockedModal
+          onClose={() => setShowFreelancerBlocked(false)}
+        />
       )}
     </div>
   );
