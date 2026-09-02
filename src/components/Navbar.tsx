@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../context/AuthContext";
 import defaultAvatar from "../assets/Profile.png";
+import { resolveAvatarFallback } from "../data/categories";
 
 interface NavbarProps {
   searchValue?: string;
@@ -64,7 +65,13 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
           aria-label={user ? "View profile" : "Log in"}
         >
           <img
-            src={user?.avatar || defaultAvatar}
+            src={
+              resolveAvatarFallback(
+                user?.avatar,
+                user?.role === "freelancer",
+                user?.category,
+              ) || defaultAvatar
+            }
             alt={user ? `${user.name}'s profile` : "Log in"}
             className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-700"
           />

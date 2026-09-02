@@ -1,6 +1,9 @@
 import defaultAvatar from "../assets/Profile.png";
 import { resolveAssetUrl, type PublicFreelancer } from "../lib/api";
-import { categoryLabelFromValue } from "../data/categories";
+import {
+  categoryLabelFromValue,
+  resolveAvatarFallback,
+} from "../data/categories";
 
 interface FreelancerCardProps {
   freelancer: PublicFreelancer;
@@ -17,7 +20,13 @@ export default function FreelancerCard({
     <div className="w-full text-left p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition duration-300">
       <div className="flex gap-4">
         <img
-          src={resolveAssetUrl(freelancer.avatarUrl) ?? defaultAvatar}
+          src={
+            resolveAvatarFallback(
+              resolveAssetUrl(freelancer.avatarUrl),
+              true,
+              freelancer.category,
+            ) ?? defaultAvatar
+          }
           alt=""
           className="w-16 h-16 sm:w-24 sm:h-24 shrink-0 rounded-lg object-cover border border-amber-100 dark:border-amber-800"
         />

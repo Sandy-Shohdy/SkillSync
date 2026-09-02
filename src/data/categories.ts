@@ -6,6 +6,7 @@ import beautyIcon from "../assets/beauty.png";
 import cleaningIcon from "../assets/clean.png";
 import photographyIcon from "../assets/photographi.png";
 import petCareIcon from "../assets/petCare.png";
+import otherIcon from "../assets/other.png";
 
 export type CategoryKey =
   | "repairs"
@@ -34,7 +35,7 @@ export const CATEGORIES: CategoryDef[] = [
   { key: "cleaning", label: "Cleaning", image: cleaningIcon },
   { key: "photography", label: "Photography", image: photographyIcon },
   { key: "pet_care", label: "Pet Care", image: petCareIcon },
-  { key: "other", label: "Other", icon: "🧰" },
+  { key: "other", label: "Other", image: otherIcon },
 ];
 
 export const CATEGORY_LABELS: Record<CategoryKey, string> = CATEGORIES.reduce(
@@ -63,4 +64,22 @@ export function categoryLabelFromValue(
   if (!category) return "";
   const match = CATEGORIES.find((c) => c.key === category);
   return match ? match.label : category;
+}
+
+export function categoryIconFromValue(
+  category: string | null | undefined,
+): string | undefined {
+  const key = categoryKeyFromValue(category);
+  return CATEGORIES.find((c) => c.key === key)?.image;
+}
+
+// A freelancer's occupation icon stands in for their profile picture until
+// they upload a real photo; customers have no occupation, so no fallback.
+export function resolveAvatarFallback(
+  avatarUrl: string | null | undefined,
+  isFreelancer: boolean,
+  category: string | null | undefined,
+): string | undefined {
+  if (avatarUrl) return avatarUrl;
+  return isFreelancer ? categoryIconFromValue(category) : undefined;
 }

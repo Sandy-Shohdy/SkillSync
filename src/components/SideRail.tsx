@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import defaultAvatar from "../assets/Profile.png";
 import settingIcon from "../assets/setting.png";
 import toggleIcon from "../assets/toggle.png";
+import { resolveAvatarFallback } from "../data/categories";
 
 export default function SideRail() {
   const { user } = useAuth();
@@ -26,12 +27,18 @@ export default function SideRail() {
         <Link
           to={user ? "/profile" : "/login"}
           aria-label={user ? "View profile" : "Log in"}
-          className="rounded-full transition hover:scale-105"
+          className="rounded-lg transition hover:scale-105"
         >
           <img
-            src={user?.avatar || defaultAvatar}
+            src={
+              resolveAvatarFallback(
+                user?.avatar,
+                user?.role === "freelancer",
+                user?.category,
+              ) || defaultAvatar
+            }
             alt={user ? `${user.name}'s profile` : "Log in"}
-            className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-700 transition hover:border-amber-500 dark:hover:border-amber-400"
+            className="w-10 h-10 rounded-lg object-cover border border-gray-300 dark:border-gray-700 transition hover:border-amber-500 dark:hover:border-amber-400"
           />
         </Link>
       </div>

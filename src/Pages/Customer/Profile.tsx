@@ -3,7 +3,11 @@ import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
-import { categoryLabelFromValue } from "../../data/categories";
+import {
+  categoryIconFromValue,
+  categoryLabelFromValue,
+  resolveAvatarFallback,
+} from "../../data/categories";
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -46,7 +50,13 @@ export default function Profile() {
       <div className="max-w-md mx-auto px-4 py-12">
         <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm text-center">
           <img
-            src={user.avatar || defaultAvatar}
+            src={
+              resolveAvatarFallback(
+                user.avatar,
+                user.role === "freelancer",
+                user.category,
+              ) || defaultAvatar
+            }
             alt={`${user.name}'s profile`}
             className="w-20 h-20 rounded-full object-cover mx-auto mb-4 border border-gray-300 dark:border-gray-700"
           />
@@ -68,8 +78,15 @@ export default function Profile() {
           {user.role === "freelancer" && (
             <div className="mt-6 text-left space-y-3">
               {user.category && (
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  <span className="font-semibold">Occupation:</span>{" "}
+                <p className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold">Occupation:</span>
+                  {categoryIconFromValue(user.category) && (
+                    <img
+                      src={categoryIconFromValue(user.category)}
+                      alt=""
+                      className="w-5 h-5 object-contain"
+                    />
+                  )}
                   {categoryLabelFromValue(user.category)}
                 </p>
               )}

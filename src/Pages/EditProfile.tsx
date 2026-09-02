@@ -7,6 +7,10 @@ import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "../lib/api";
 import { CATEGORIES, categoryKeyFromValue } from "../data/categories";
 
+function categoryImage(key: string) {
+  return CATEGORIES.find((c) => c.key === key)?.image;
+}
+
 export default function EditProfile() {
   const { user, updateUser } = useAuth();
   const isFreelancer = user?.role === "freelancer";
@@ -111,6 +115,12 @@ export default function EditProfile() {
     e.preventDefault();
     setError(null);
     setSuccess(false);
+
+    if (isFreelancer && skills.length === 0) {
+      setError("Add at least one skill");
+      return;
+    }
+
     setSubmitting(true);
 
     const category = isFreelancer
@@ -166,7 +176,12 @@ export default function EditProfile() {
             {/* Profile picture */}
             <div className="flex items-center gap-4">
               <img
-                src={avatarPreview || user.avatar || defaultAvatar}
+                src={
+                  avatarPreview ||
+                  user.avatar ||
+                  (isFreelancer ? categoryImage(formData.occupation) : undefined) ||
+                  defaultAvatar
+                }
                 alt="Profile preview"
                 className="w-16 h-16 rounded-full object-cover border border-gray-300 dark:border-gray-700"
               />
@@ -237,6 +252,10 @@ export default function EditProfile() {
                       </option>
                     ))}
                   </select>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
+                    This becomes your profile picture until you upload your
+                    own photo.
+                  </p>
                 </div>
 
                 {formData.occupation === "other" && (
@@ -282,6 +301,7 @@ export default function EditProfile() {
                     value={formData.bio}
                     onChange={handleChange}
                     placeholder="Tell customers about yourself..."
+                    required
                     rows={3}
                     className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
                   />
@@ -309,7 +329,7 @@ export default function EditProfile() {
                       Add
                     </button>
                   </div>
-                  {skills.length > 0 && (
+                  {skills.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {skills.map((skill) => (
                         <span
@@ -328,6 +348,10 @@ export default function EditProfile() {
                         </span>
                       ))}
                     </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      Add at least one skill
+                    </p>
                   )}
                 </div>
               </>
