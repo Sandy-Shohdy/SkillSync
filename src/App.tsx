@@ -6,7 +6,8 @@ import Signup from "./Pages/Auth/Signup.tsx";
 import Dashboard from "./Pages/Customer/Dashboard.tsx";
 import BrowseFreelancers from "./Pages/Customer/BrowseFreelancers.tsx";
 import Profile from "./Pages/Customer/Profile.tsx";
-import ProfileSetup from "./Pages/Freelancer/ProfileSetup.tsx";
+import EditProfile from "./Pages/EditProfile.tsx";
+import BookingRequests from "./Pages/Freelancer/BookingRequests.tsx";
 
 export default function App() {
   return (
@@ -19,7 +20,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/freelancer/profile-setup" element={<ProfileSetup />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/freelancer/bookings" element={<BookingRequests />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

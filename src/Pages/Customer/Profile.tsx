@@ -56,6 +56,11 @@ export default function Profile() {
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             {user.email}
           </p>
+          {user.phone && (
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+              {user.phone}
+            </p>
+          )}
           <span className="inline-block mt-3 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-xs font-semibold capitalize">
             {user.role}
           </span>
@@ -96,12 +101,21 @@ export default function Profile() {
 
           {user.role === "freelancer" && (
             <Link
-              to="/freelancer/profile-setup"
+              to="/freelancer/bookings"
               className="block w-full mt-8 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold text-center hover:bg-amber-600 transition"
             >
-              Edit Profile
+              Booking Requests
             </Link>
           )}
+
+          <Link
+            to="/profile/edit"
+            className={`block w-full py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-center hover:bg-gray-100 dark:hover:bg-gray-800 transition ${
+              user.role === "freelancer" ? "mt-3" : "mt-8"
+            }`}
+          >
+            Edit Profile
+          </Link>
 
           <button
             type="button"

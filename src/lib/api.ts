@@ -130,3 +130,48 @@ export async function getFreelancers(): Promise<PublicFreelancer[]> {
   const response = await fetch(`${API_URL}/freelancers`);
   return parseJsonOrThrow<PublicFreelancer[]>(response);
 }
+
+export interface CreateBookingPayload {
+  freelancerId: string;
+  date: string;
+  time: string;
+  notes?: string;
+}
+
+export async function createBooking(
+  token: string,
+  payload: CreateBookingPayload,
+): Promise<void> {
+  const response = await fetch(`${API_URL}/bookings`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  await parseJsonOrThrow(response);
+}
+
+export interface BookingRequest {
+  id: string;
+  date: string;
+  time: string;
+  notes: string | null;
+  createdAt: string;
+  customer: {
+    id: string;
+    fullName: string;
+    email: string;
+    phone: string | null;
+  };
+}
+
+export async function getMyBookingRequests(
+  token: string,
+): Promise<BookingRequest[]> {
+  const response = await fetch(`${API_URL}/bookings/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<BookingRequest[]>(response);
+}

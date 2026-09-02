@@ -4,7 +4,11 @@ import type { PublicFreelancer } from "../lib/api";
 interface BookingCardProps {
   freelancer: PublicFreelancer;
   onClose: () => void;
-  onConfirm: (booking: { date: string; time: string }) => void;
+  onConfirm: (booking: {
+    date: string;
+    time: string;
+    notes: string;
+  }) => Promise<void>;
 }
 
 const TIME_SLOTS = [
@@ -30,12 +34,23 @@ export default function BookingCard({
 }: BookingCardProps) {
   const [date, setDate] = useState(todayISO());
   const [time, setTime] = useState<string | null>(null);
+  const [notes, setNotes] = useState("");
   const [confirmed, setConfirmed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!time) return;
-    onConfirm({ date, time });
-    setConfirmed(true);
+    setError(null);
+    setSubmitting(true);
+    try {
+      await onConfirm({ date, time, notes: notes.trim() });
+      setConfirmed(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -58,6 +73,11 @@ export default function BookingCard({
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
               {freelancer.fullName} on {date} at {time}
             </p>
+            {notes && (
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 italic">
+                "{notes}"
+              </p>
+            )}
             <button
               type="button"
               onClick={onClose}
@@ -127,13 +147,33 @@ export default function BookingCard({
               </div>
             </div>
 
+            <label className="block mt-4">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Details <span className="text-gray-400 font-normal">(optional)</span>
+              </span>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Anything the freelancer should know — e.g. what needs fixing, access instructions..."
+                rows={3}
+                maxLength={1000}
+                className="mt-1.5 w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+            </label>
+
+            {error && (
+              <p className="text-sm text-red-600 dark:text-red-400 text-center mt-4">
+                {error}
+              </p>
+            )}
+
             <button
               type="button"
-              disabled={!time}
+              disabled={!time || submitting}
               onClick={handleConfirm}
               className="w-full mt-6 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Confirm booking
+              {submitting ? "Booking..." : "Confirm booking"}
             </button>
           </>
         )}

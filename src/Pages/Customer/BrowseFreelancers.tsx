@@ -6,7 +6,11 @@ import BookingCard from "../../components/BookingCard";
 import AuthRequiredModal from "../../components/AuthRequiredModal";
 import FreelancerBookingBlockedModal from "../../components/FreelancerBookingBlockedModal";
 import { useAuth } from "../../context/AuthContext";
-import { getFreelancers, type PublicFreelancer } from "../../lib/api";
+import {
+  createBooking,
+  getFreelancers,
+  type PublicFreelancer,
+} from "../../lib/api";
 import { BROWSE_FILTERS, categoryLabelFromValue } from "../../data/categories";
 
 export default function BrowseFreelancers() {
@@ -141,17 +145,18 @@ export default function BrowseFreelancers() {
         )}
       </div>
 
-      {selectedFreelancer && (
+      {selectedFreelancer && user && (
         <BookingCard
           freelancer={selectedFreelancer}
           onClose={() => setSelectedFreelancer(null)}
-          onConfirm={({ date, time }) => {
-            console.log("Booking confirmed:", {
+          onConfirm={({ date, time, notes }) =>
+            createBooking(user.token, {
               freelancerId: selectedFreelancer.id,
               date,
               time,
-            });
-          }}
+              notes: notes || undefined,
+            })
+          }
         />
       )}
 
