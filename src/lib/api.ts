@@ -159,7 +159,7 @@ export async function createBooking(
   await parseJsonOrThrow(response);
 }
 
-export type BookingStatus = "pending" | "accepted" | "declined";
+export type BookingStatus = "pending" | "accepted" | "declined" | "cancelled";
 
 export interface BookingRequest {
   id: string;
@@ -223,4 +223,15 @@ export async function updateBookingStatus(
     body: JSON.stringify({ status }),
   });
   return parseJsonOrThrow<BookingRequest>(response);
+}
+
+export async function cancelBooking(
+  token: string,
+  bookingId: string,
+): Promise<CustomerBooking> {
+  const response = await fetch(`${API_URL}/bookings/${bookingId}/cancel`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<CustomerBooking>(response);
 }

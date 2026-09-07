@@ -54,4 +54,12 @@ export class BookingsController {
     }
     return this.bookingsService.updateStatus(req.user.sub, id, dto);
   }
+
+  @Patch(':id/cancel')
+  cancel(@Req() req: AuthedRequest, @Param('id') id: string) {
+    if (req.user.role !== 'customer') {
+      throw new ForbiddenException('Only customers can cancel their bookings');
+    }
+    return this.bookingsService.cancel(req.user.sub, id);
+  }
 }

@@ -12,6 +12,7 @@ export enum BookingStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   DECLINED = 'declined',
+  CANCELLED = 'cancelled',
 }
 
 @Entity('bookings')

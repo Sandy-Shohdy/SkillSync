@@ -5,6 +5,7 @@ import SideRail from "../../components/SideRail";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 import {
+  cancelBooking,
   getMyBookings,
   resolveAssetUrl,
   type CustomerBooking,
@@ -36,18 +37,22 @@ const STATUS_STYLES: Record<CustomerBooking["status"], string> = {
   accepted:
     "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400",
   declined: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
+  cancelled: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
 };
 
 const STATUS_LABELS: Record<CustomerBooking["status"], string> = {
   pending: "Pending",
   accepted: "Accepted",
   declined: "Declined",
+  cancelled: "Cancelled",
 };
 
 export default function MyBookings() {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<CustomerBooking[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user || user.role !== "customer") return;
@@ -67,6 +72,25 @@ export default function MyBookings() {
       cancelled = true;
     };
   }, [user]);
+
+  const handleCancel = async (bookingId: string) => {
+    if (!user) return;
+    if (!window.confirm("Cancel this booking?")) return;
+    setCancelError(null);
+    setCancellingId(bookingId);
+    try {
+      const updated = await cancelBooking(user.token, bookingId);
+      setBookings(
+        (prev) => prev?.map((b) => (b.id === bookingId ? updated : b)) ?? prev,
+      );
+    } catch (err) {
+      setCancelError(
+        err instanceof Error ? err.message : "Something went wrong",
+      );
+    } finally {
+      setCancellingId(null);
+    }
+  };
 
   if (!user) {
     return (
@@ -134,6 +158,12 @@ export default function MyBookings() {
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
           Services you've requested.
         </p>
+
+        {cancelError && (
+          <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+            {cancelError}
+          </p>
+        )}
 
         {error ? (
           <p className="text-center text-red-600 dark:text-red-400 py-16">
@@ -215,6 +245,20 @@ export default function MyBookings() {
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-3">
                     Requested {formatRequestedAt(booking.createdAt)}
                   </p>
+
+                  {(booking.status === "pending" ||
+                    booking.status === "accepted") && (
+                    <button
+                      type="button"
+                      disabled={cancellingId === booking.id}
+                      onClick={() => handleCancel(booking.id)}
+                      className="w-full mt-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {cancellingId === booking.id
+                        ? "Cancelling..."
+                        : "Cancel Booking"}
+                    </button>
+                  )}
                 </div>
               );
             })}

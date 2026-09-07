@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Booking, BookingStatus } from './entities/booking.entity';
@@ -107,5 +112,28 @@ export class BookingsService {
       dto.status === 'accepted' ? BookingStatus.ACCEPTED : BookingStatus.DECLINED;
     const saved = await this.bookingsRepository.save(booking);
     return toBookingRequest(saved);
+  }
+
+  async cancel(customerId: string, bookingId: string) {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId },
+      relations: ['freelancer'],
+    });
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+    if (booking.customerId !== customerId) {
+      throw new ForbiddenException('This booking does not belong to you');
+    }
+    if (
+      booking.status === BookingStatus.CANCELLED ||
+      booking.status === BookingStatus.DECLINED
+    ) {
+      throw new BadRequestException('This booking is already closed');
+    }
+
+    booking.status = BookingStatus.CANCELLED;
+    const saved = await this.bookingsRepository.save(booking);
+    return toCustomerBooking(saved);
   }
 }

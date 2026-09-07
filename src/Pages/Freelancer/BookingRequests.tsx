@@ -31,12 +31,14 @@ const STATUS_STYLES: Record<BookingRequest["status"], string> = {
   accepted:
     "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400",
   declined: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
+  cancelled: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
 };
 
 const STATUS_LABELS: Record<BookingRequest["status"], string> = {
   pending: "Pending",
   accepted: "Accepted",
   declined: "Declined",
+  cancelled: "Cancelled",
 };
 
 export default function BookingRequests() {

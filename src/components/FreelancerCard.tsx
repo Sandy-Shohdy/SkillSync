@@ -17,8 +17,8 @@ export default function FreelancerCard({
   const categoryLabel = categoryLabelFromValue(freelancer.category);
 
   return (
-    <div className="w-full text-left p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition duration-300">
-      <div className="flex gap-4">
+    <div className="w-full h-full flex flex-col text-left p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition duration-300">
+      <div className="flex gap-4 flex-1">
         <img
           src={
             resolveAvatarFallback(
@@ -32,33 +32,19 @@ export default function FreelancerCard({
         />
 
         <div className="flex-1 min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-3">
-            <div className="min-w-0">
-              <h3 className="text-gray-900 dark:text-white font-semibold wrap-break-word">
-                {freelancer.fullName}
-              </h3>
-              {categoryLabel && (
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  {categoryLabel}
-                </p>
-              )}
-              {freelancer.location && (
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  📍 {freelancer.location}
-                </p>
-              )}
-            </div>
-            {freelancer.pricePerHour != null && (
-              <div className="text-left sm:text-right shrink-0">
-                <p className="text-gray-900 dark:text-white font-bold">
-                  SEK {freelancer.pricePerHour}
-                </p>
-                <p className="text-gray-500 dark:text-gray-400 text-xs">
-                  per hour
-                </p>
-              </div>
-            )}
-          </div>
+          <h3 className="text-gray-900 dark:text-white font-semibold wrap-break-word">
+            {freelancer.fullName}
+          </h3>
+          {categoryLabel && (
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              {categoryLabel}
+            </p>
+          )}
+          {freelancer.location && (
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              📍 {freelancer.location}
+            </p>
+          )}
 
           {freelancer.bio && (
             <p className="text-gray-600 dark:text-gray-300 text-sm mt-2 line-clamp-2">
@@ -81,11 +67,23 @@ export default function FreelancerCard({
         </div>
       </div>
 
-      <div className="flex justify-center lg:justify-end mt-3">
+      <div className="flex items-end justify-between gap-3 mt-3 pt-3 border-t border-gray-100 dark:border-gray-800">
+        {freelancer.pricePerHour != null ? (
+          <div className="shrink-0">
+            <p className="text-gray-900 dark:text-white font-bold">
+              SEK {freelancer.pricePerHour}
+            </p>
+            <p className="text-gray-500 dark:text-gray-400 text-xs">
+              per hour
+            </p>
+          </div>
+        ) : (
+          <span />
+        )}
         <button
           type="button"
           onClick={() => onSelect(freelancer.id)}
-          className="px-4 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition"
+          className="px-4 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition shrink-0"
         >
           Book Now
         </button>
