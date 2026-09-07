@@ -12,6 +12,7 @@ function toPublicFreelancer(user: User) {
     pricePerHour: user.pricePerHour ?? null,
     bio: user.bio ?? null,
     skills: user.skills ?? null,
+    location: user.location ?? null,
     createdAt: user.createdAt,
   };
 }

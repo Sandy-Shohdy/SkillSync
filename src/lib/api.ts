@@ -13,6 +13,7 @@ export interface ApiUser {
   category: string | null;
   pricePerHour: number | null;
   skills: string[] | null;
+  location: string | null;
   createdAt: string;
 }
 
@@ -42,6 +43,7 @@ export interface SignupPayload {
   category?: string;
   pricePerHour?: number;
   skills?: string[];
+  location?: string;
 }
 
 export async function signup(payload: SignupPayload): Promise<AuthResponse> {
@@ -79,6 +81,7 @@ export interface UpdateProfilePayload {
   category?: string;
   pricePerHour?: number;
   skills?: string[];
+  location?: string;
   avatarFile?: File;
 }
 
@@ -97,6 +100,8 @@ export async function updateProfile(
     formData.append("pricePerHour", String(payload.pricePerHour));
   if (payload.skills !== undefined)
     formData.append("skills", JSON.stringify(payload.skills));
+  if (payload.location !== undefined)
+    formData.append("location", payload.location);
   if (payload.avatarFile) formData.append("avatar", payload.avatarFile);
 
   const response = await fetch(`${API_URL}/users/me`, {
@@ -123,6 +128,7 @@ export interface PublicFreelancer {
   pricePerHour: number | null;
   bio: string | null;
   skills: string[] | null;
+  location: string | null;
   createdAt: string;
 }
 
@@ -153,11 +159,14 @@ export async function createBooking(
   await parseJsonOrThrow(response);
 }
 
+export type BookingStatus = "pending" | "accepted" | "declined";
+
 export interface BookingRequest {
   id: string;
   date: string;
   time: string;
   notes: string | null;
+  status: BookingStatus;
   createdAt: string;
   customer: {
     id: string;
@@ -174,4 +183,20 @@ export async function getMyBookingRequests(
     headers: { Authorization: `Bearer ${token}` },
   });
   return parseJsonOrThrow<BookingRequest[]>(response);
+}
+
+export async function updateBookingStatus(
+  token: string,
+  bookingId: string,
+  status: "accepted" | "declined",
+): Promise<BookingRequest> {
+  const response = await fetch(`${API_URL}/bookings/${bookingId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ status }),
+  });
+  return parseJsonOrThrow<BookingRequest>(response);
 }

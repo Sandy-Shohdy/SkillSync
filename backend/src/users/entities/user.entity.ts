@@ -48,6 +48,9 @@ export class User {
   @Column({ type: "text", array: true, nullable: true })
   skills?: string[];
 
+  @Column({ nullable: true })
+  location?: string;
+
   @CreateDateColumn()
   createdAt: Date;
 }

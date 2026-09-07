@@ -8,6 +8,12 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 
+export enum BookingStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+}
+
 @Entity('bookings')
 export class Booking {
   @PrimaryGeneratedColumn('uuid')
@@ -21,6 +27,9 @@ export class Booking {
 
   @Column({ type: 'text', nullable: true })
   notes?: string;
+
+  @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.PENDING })
+  status: BookingStatus;
 
   @Column()
   freelancerId: string;

@@ -11,7 +11,11 @@ import {
   getFreelancers,
   type PublicFreelancer,
 } from "../../lib/api";
-import { BROWSE_FILTERS, categoryLabelFromValue } from "../../data/categories";
+import {
+  BROWSE_FILTERS,
+  categoryKeyFromValue,
+  categoryLabelFromValue,
+} from "../../data/categories";
 
 export default function BrowseFreelancers() {
   const { user } = useAuth();
@@ -43,7 +47,10 @@ export default function BrowseFreelancers() {
   const query = searchQuery.trim().toLowerCase();
 
   const filteredFreelancers = (freelancers ?? []).filter((freelancer) => {
-    if (activeCategory !== "all" && freelancer.category !== activeCategory)
+    if (
+      activeCategory !== "all" &&
+      categoryKeyFromValue(freelancer.category) !== activeCategory
+    )
       return false;
     if (query) {
       const categoryLabel = categoryLabelFromValue(freelancer.category);

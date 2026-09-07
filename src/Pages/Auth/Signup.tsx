@@ -19,6 +19,7 @@ export default function Signup() {
     role: "customer" as UserRole,
     occupation: "tutoring" as CategoryKey,
     occupation_other: "",
+    location: "",
     price_per_hour: "",
     bio: "",
   });
@@ -102,6 +103,8 @@ export default function Signup() {
             ? Number(formData.price_per_hour)
             : undefined,
         skills: formData.role === "freelancer" ? skills : undefined,
+        location:
+          formData.role === "freelancer" ? formData.location : undefined,
       });
       signin(toAuthUser(user, accessToken));
       navigate("/");
@@ -276,6 +279,24 @@ export default function Signup() {
                   />
                 </div>
               )}
+
+            {/* Location (only for freelancers) */}
+            {formData.role === "freelancer" && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  placeholder="e.g. Södermalm"
+                  required
+                  className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                />
+              </div>
+            )}
 
             {/* Price per hour (only for freelancers) */}
             {formData.role === "freelancer" && (

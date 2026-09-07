@@ -50,4 +50,8 @@ export class UpdateProfileDto {
   @IsArray()
   @IsString({ each: true })
   skills?: string[];
+
+  @IsOptional()
+  @IsString()
+  location?: string;
 }

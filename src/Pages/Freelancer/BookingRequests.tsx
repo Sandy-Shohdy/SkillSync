@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import { useAuth } from "../../context/AuthContext";
-import { getMyBookingRequests, type BookingRequest } from "../../lib/api";
+import {
+  getMyBookingRequests,
+  updateBookingStatus,
+  type BookingRequest,
+} from "../../lib/api";
 
 function formatDate(date: string) {
   return new Date(`${date}T00:00:00`).toLocaleDateString(undefined, {
@@ -21,10 +25,26 @@ function formatRequestedAt(createdAt: string) {
   });
 }
 
+const STATUS_STYLES: Record<BookingRequest["status"], string> = {
+  pending:
+    "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400",
+  accepted:
+    "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400",
+  declined: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
+};
+
+const STATUS_LABELS: Record<BookingRequest["status"], string> = {
+  pending: "Pending",
+  accepted: "Accepted",
+  declined: "Declined",
+};
+
 export default function BookingRequests() {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<BookingRequest[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [respondingId, setRespondingId] = useState<string | null>(null);
+  const [respondError, setRespondError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user || user.role !== "freelancer") return;
@@ -46,6 +66,27 @@ export default function BookingRequests() {
       cancelled = true;
     };
   }, [user]);
+
+  const handleRespond = async (
+    bookingId: string,
+    status: "accepted" | "declined",
+  ) => {
+    if (!user) return;
+    setRespondError(null);
+    setRespondingId(bookingId);
+    try {
+      const updated = await updateBookingStatus(user.token, bookingId, status);
+      setBookings((prev) =>
+        prev?.map((b) => (b.id === bookingId ? updated : b)) ?? prev,
+      );
+    } catch (err) {
+      setRespondError(
+        err instanceof Error ? err.message : "Something went wrong",
+      );
+    } finally {
+      setRespondingId(null);
+    }
+  };
 
   if (!user) {
     return (
@@ -114,6 +155,12 @@ export default function BookingRequests() {
           Customers who want to book you.
         </p>
 
+        {respondError && (
+          <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+            {respondError}
+          </p>
+        )}
+
         {error ? (
           <p className="text-center text-red-600 dark:text-red-400 py-16">
             {error}
@@ -133,11 +180,18 @@ export default function BookingRequests() {
                 key={booking.id}
                 className="p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-gray-900 dark:text-white font-semibold">
-                      {booking.customer.fullName}
-                    </h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-gray-900 dark:text-white font-semibold">
+                        {booking.customer.fullName}
+                      </h3>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_STYLES[booking.status]}`}
+                      >
+                        {STATUS_LABELS[booking.status]}
+                      </span>
+                    </div>
                     <p className="text-gray-500 dark:text-gray-400 text-sm">
                       {booking.customer.email}
                       {booking.customer.phone
@@ -162,6 +216,27 @@ export default function BookingRequests() {
                 <p className="text-gray-400 dark:text-gray-500 text-xs mt-3">
                   Requested {formatRequestedAt(booking.createdAt)}
                 </p>
+
+                {booking.status === "pending" && (
+                  <div className="flex gap-2 mt-3">
+                    <button
+                      type="button"
+                      disabled={respondingId === booking.id}
+                      onClick={() => handleRespond(booking.id, "accepted")}
+                      className="flex-1 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      type="button"
+                      disabled={respondingId === booking.id}
+                      onClick={() => handleRespond(booking.id, "declined")}
+                      className="flex-1 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Decline
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

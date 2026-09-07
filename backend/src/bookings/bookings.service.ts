@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Booking } from './entities/booking.entity';
+import { Booking, BookingStatus } from './entities/booking.entity';
 import { User, UserRole } from '../users/entities/user.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 
 function toBookingRequest(booking: Booking) {
   return {
@@ -11,6 +12,7 @@ function toBookingRequest(booking: Booking) {
     date: booking.date,
     time: booking.time,
     notes: booking.notes ?? null,
+    status: booking.status,
     createdAt: booking.createdAt,
     customer: {
       id: booking.customer.id,
@@ -55,5 +57,27 @@ export class BookingsService {
       order: { date: 'ASC', time: 'ASC' },
     });
     return bookings.map(toBookingRequest);
+  }
+
+  async updateStatus(
+    freelancerId: string,
+    bookingId: string,
+    dto: UpdateBookingStatusDto,
+  ) {
+    const booking = await this.bookingsRepository.findOne({
+      where: { id: bookingId },
+      relations: ['customer'],
+    });
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+    if (booking.freelancerId !== freelancerId) {
+      throw new ForbiddenException('This booking does not belong to you');
+    }
+
+    booking.status =
+      dto.status === 'accepted' ? BookingStatus.ACCEPTED : BookingStatus.DECLINED;
+    const saved = await this.bookingsRepository.save(booking);
+    return toBookingRequest(saved);
   }
 }

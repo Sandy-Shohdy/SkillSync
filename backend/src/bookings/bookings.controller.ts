@@ -3,12 +3,15 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  Param,
+  Patch,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 import { AuthedRequest, JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('bookings')
@@ -30,5 +33,17 @@ export class BookingsController {
       throw new ForbiddenException('Only freelancers can view booking requests');
     }
     return this.bookingsService.findForFreelancer(req.user.sub);
+  }
+
+  @Patch(':id/status')
+  updateStatus(
+    @Req() req: AuthedRequest,
+    @Param('id') id: string,
+    @Body() dto: UpdateBookingStatusDto,
+  ) {
+    if (req.user.role !== 'freelancer') {
+      throw new ForbiddenException('Only freelancers can respond to booking requests');
+    }
+    return this.bookingsService.updateStatus(req.user.sub, id, dto);
   }
 }

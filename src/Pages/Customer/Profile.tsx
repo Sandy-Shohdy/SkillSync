@@ -90,6 +90,12 @@ export default function Profile() {
                   {categoryLabelFromValue(user.category)}
                 </p>
               )}
+              {user.location && (
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold">Location:</span>{" "}
+                  {user.location}
+                </p>
+              )}
               {user.pricePerHour != null && (
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                   <span className="font-semibold">Price:</span>{" "}

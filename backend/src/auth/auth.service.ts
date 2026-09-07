@@ -43,6 +43,7 @@ export class AuthService {
       category: dto.role === UserRole.FREELANCER ? dto.category : undefined,
       pricePerHour: dto.role === UserRole.FREELANCER ? dto.pricePerHour : undefined,
       skills: dto.role === UserRole.FREELANCER ? dto.skills : undefined,
+      location: dto.role === UserRole.FREELANCER ? dto.location : undefined,
     });
 
     const saved = await this.usersRepository.save(user);

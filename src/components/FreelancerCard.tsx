@@ -42,6 +42,11 @@ export default function FreelancerCard({
                   {categoryLabel}
                 </p>
               )}
+              {freelancer.location && (
+                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                  📍 {freelancer.location}
+                </p>
+              )}
             </div>
             {freelancer.pricePerHour != null && (
               <div className="text-left sm:text-right shrink-0">

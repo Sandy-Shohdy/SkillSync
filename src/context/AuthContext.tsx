@@ -22,6 +22,7 @@ export interface AuthUser {
   category: string | null;
   pricePerHour: number | null;
   skills: string[] | null;
+  location: string | null;
 }
 
 export function toAuthUser(apiUser: ApiUser, token: string): AuthUser {
@@ -37,6 +38,7 @@ export function toAuthUser(apiUser: ApiUser, token: string): AuthUser {
     category: apiUser.category,
     pricePerHour: apiUser.pricePerHour,
     skills: apiUser.skills,
+    location: apiUser.location,
   };
 }
 

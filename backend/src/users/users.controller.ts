@@ -70,6 +70,7 @@ export class UsersController {
     if (dto.category !== undefined) user.category = dto.category;
     if (dto.pricePerHour !== undefined) user.pricePerHour = dto.pricePerHour;
     if (dto.skills !== undefined) user.skills = dto.skills;
+    if (dto.location !== undefined) user.location = dto.location;
     if (avatar) user.avatarUrl = `/uploads/avatars/${avatar.filename}`;
 
     const saved = await this.usersRepository.save(user);

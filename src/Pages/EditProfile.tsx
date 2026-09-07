@@ -23,6 +23,7 @@ export default function EditProfile() {
     occupation: initialOccupation,
     occupation_other:
       initialOccupation === "other" ? (user?.category ?? "") : "",
+    location: user?.location ?? "",
     price_per_hour: user?.pricePerHour?.toString() ?? "",
     bio: user?.bio ?? "",
   });
@@ -142,6 +143,7 @@ export default function EditProfile() {
                 : undefined,
               bio: formData.bio,
               skills,
+              location: formData.location,
             }
           : {}),
       });
@@ -274,6 +276,22 @@ export default function EditProfile() {
                     />
                   </div>
                 )}
+
+                {/* Location */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    placeholder="e.g. Södermalm"
+                    required
+                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+                  />
+                </div>
 
                 {/* Price per hour */}
                 <div>
