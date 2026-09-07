@@ -23,6 +23,25 @@ function toBookingRequest(booking: Booking) {
   };
 }
 
+function toCustomerBooking(booking: Booking) {
+  return {
+    id: booking.id,
+    date: booking.date,
+    time: booking.time,
+    notes: booking.notes ?? null,
+    status: booking.status,
+    createdAt: booking.createdAt,
+    freelancer: {
+      id: booking.freelancer.id,
+      fullName: booking.freelancer.fullName,
+      avatarUrl: booking.freelancer.avatarUrl ?? null,
+      category: booking.freelancer.category ?? null,
+      location: booking.freelancer.location ?? null,
+      pricePerHour: booking.freelancer.pricePerHour ?? null,
+    },
+  };
+}
+
 @Injectable()
 export class BookingsService {
   constructor(
@@ -57,6 +76,15 @@ export class BookingsService {
       order: { date: 'ASC', time: 'ASC' },
     });
     return bookings.map(toBookingRequest);
+  }
+
+  async findForCustomer(customerId: string) {
+    const bookings = await this.bookingsRepository.find({
+      where: { customerId },
+      relations: ['freelancer'],
+      order: { date: 'ASC', time: 'ASC' },
+    });
+    return bookings.map(toCustomerBooking);
   }
 
   async updateStatus(

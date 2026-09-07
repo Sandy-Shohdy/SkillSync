@@ -35,6 +35,14 @@ export class BookingsController {
     return this.bookingsService.findForFreelancer(req.user.sub);
   }
 
+  @Get('mine')
+  findMyBookings(@Req() req: AuthedRequest) {
+    if (req.user.role !== 'customer') {
+      throw new ForbiddenException('Only customers can view their bookings');
+    }
+    return this.bookingsService.findForCustomer(req.user.sub);
+  }
+
   @Patch(':id/status')
   updateStatus(
     @Req() req: AuthedRequest,

@@ -131,11 +131,18 @@ export default function Profile() {
             </Link>
           )}
 
+          {user.role === "customer" && (
+            <Link
+              to="/bookings"
+              className="block w-full mt-8 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold text-center hover:bg-amber-600 transition"
+            >
+              My Bookings
+            </Link>
+          )}
+
           <Link
             to="/profile/edit"
-            className={`block w-full py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-center hover:bg-gray-100 dark:hover:bg-gray-800 transition ${
-              user.role === "freelancer" ? "mt-3" : "mt-8"
-            }`}
+            className="block w-full mt-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold text-center hover:bg-gray-100 dark:hover:bg-gray-800 transition"
           >
             Edit Profile
           </Link>

@@ -185,6 +185,30 @@ export async function getMyBookingRequests(
   return parseJsonOrThrow<BookingRequest[]>(response);
 }
 
+export interface CustomerBooking {
+  id: string;
+  date: string;
+  time: string;
+  notes: string | null;
+  status: BookingStatus;
+  createdAt: string;
+  freelancer: {
+    id: string;
+    fullName: string;
+    avatarUrl: string | null;
+    category: string | null;
+    location: string | null;
+    pricePerHour: number | null;
+  };
+}
+
+export async function getMyBookings(token: string): Promise<CustomerBooking[]> {
+  const response = await fetch(`${API_URL}/bookings/mine`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<CustomerBooking[]>(response);
+}
+
 export async function updateBookingStatus(
   token: string,
   bookingId: string,

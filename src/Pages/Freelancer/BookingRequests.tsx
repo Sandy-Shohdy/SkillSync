@@ -76,8 +76,8 @@ export default function BookingRequests() {
     setRespondingId(bookingId);
     try {
       const updated = await updateBookingStatus(user.token, bookingId, status);
-      setBookings((prev) =>
-        prev?.map((b) => (b.id === bookingId ? updated : b)) ?? prev,
+      setBookings(
+        (prev) => prev?.map((b) => (b.id === bookingId ? updated : b)) ?? prev,
       );
     } catch (err) {
       setRespondError(
@@ -151,9 +151,6 @@ export default function BookingRequests() {
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">
           Booking Requests
         </h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
-          Customers who want to book you.
-        </p>
 
         {respondError && (
           <p className="text-sm text-red-600 dark:text-red-400 mb-4">
