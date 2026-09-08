@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "../context/AuthContext";
+import { useUnreadNotifications } from "../hooks/useUnreadNotifications";
 import defaultAvatar from "../assets/Profile.png";
 import { resolveAvatarFallback } from "../data/categories";
 
@@ -12,6 +13,7 @@ interface NavbarProps {
 
 export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
   const { user } = useAuth();
+  const hasUnread = useUnreadNotifications();
   const [localSearch, setLocalSearch] = useState("");
   const search = searchValue !== undefined ? searchValue : localSearch;
 
@@ -61,7 +63,7 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
 
         <Link
           to={user ? "/profile" : "/login"}
-          className="sm:hidden shrink-0"
+          className="relative sm:hidden shrink-0"
           aria-label={user ? "View profile" : "Log in"}
         >
           <img
@@ -75,6 +77,12 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
             alt={user ? `${user.name}'s profile` : "Log in"}
             className="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-700"
           />
+          {hasUnread && (
+            <span
+              className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-red-500 border-2 border-white dark:border-gray-900"
+              aria-hidden="true"
+            />
+          )}
         </Link>
       </div>
     </header>

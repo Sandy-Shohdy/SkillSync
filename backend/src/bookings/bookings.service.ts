@@ -10,6 +10,8 @@ import { Booking, BookingStatus, BookingType } from './entities/booking.entity';
 import { User, UserRole } from '../users/entities/user.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/entities/notification.entity';
 
 function toBookingRequest(booking: Booking) {
   return {
@@ -58,6 +60,7 @@ export class BookingsService {
     private readonly bookingsRepository: Repository<Booking>,
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async create(customerId: string, dto: CreateBookingDto) {
@@ -67,17 +70,33 @@ export class BookingsService {
     if (!freelancer) {
       throw new NotFoundException('Freelancer not found');
     }
+    const customer = await this.usersRepository.findOne({
+      where: { id: customerId },
+    });
 
+    const type = dto.type ?? BookingType.APPOINTMENT;
     const booking = this.bookingsRepository.create({
       freelancerId: freelancer.id,
       customerId,
-      type: dto.type ?? BookingType.APPOINTMENT,
+      type,
       date: dto.date,
       time: dto.time,
       phone: dto.phone,
       notes: dto.notes,
     });
-    return this.bookingsRepository.save(booking);
+    const saved = await this.bookingsRepository.save(booking);
+
+    const customerName = customer?.fullName ?? 'A customer';
+    await this.notificationsService.create(
+      freelancer.id,
+      NotificationType.BOOKING_CREATED,
+      type === BookingType.INQUIRY
+        ? `${customerName} wants a call back`
+        : `${customerName} requested a booking for ${saved.date} at ${saved.time}`,
+      saved.id,
+    );
+
+    return saved;
   }
 
   async findForFreelancer(freelancerId: string) {
@@ -105,7 +124,7 @@ export class BookingsService {
   ) {
     const booking = await this.bookingsRepository.findOne({
       where: { id: bookingId },
-      relations: ['customer'],
+      relations: ['customer', 'freelancer'],
     });
     if (!booking) {
       throw new NotFoundException('Booking not found');
@@ -114,16 +133,26 @@ export class BookingsService {
       throw new ForbiddenException('This booking does not belong to you');
     }
 
-    booking.status =
-      dto.status === 'accepted' ? BookingStatus.ACCEPTED : BookingStatus.DECLINED;
+    const accepted = dto.status === 'accepted';
+    booking.status = accepted ? BookingStatus.ACCEPTED : BookingStatus.DECLINED;
     const saved = await this.bookingsRepository.save(booking);
+
+    const noun =
+      booking.type === BookingType.INQUIRY ? 'call back request' : 'booking';
+    await this.notificationsService.create(
+      booking.customerId,
+      accepted ? NotificationType.BOOKING_ACCEPTED : NotificationType.BOOKING_DECLINED,
+      `${booking.freelancer.fullName} ${accepted ? 'accepted' : 'declined'} your ${noun}`,
+      booking.id,
+    );
+
     return toBookingRequest(saved);
   }
 
   async cancel(customerId: string, bookingId: string) {
     const booking = await this.bookingsRepository.findOne({
       where: { id: bookingId },
-      relations: ['freelancer'],
+      relations: ['freelancer', 'customer'],
     });
     if (!booking) {
       throw new NotFoundException('Booking not found');
@@ -140,6 +169,16 @@ export class BookingsService {
 
     booking.status = BookingStatus.CANCELLED;
     const saved = await this.bookingsRepository.save(booking);
+
+    const noun =
+      booking.type === BookingType.INQUIRY ? 'call back request' : 'booking';
+    await this.notificationsService.create(
+      booking.freelancerId,
+      NotificationType.BOOKING_CANCELLED,
+      `${booking.customer.fullName} cancelled their ${noun}`,
+      booking.id,
+    );
+
     return toCustomerBooking(saved);
   }
 }

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { User } from './users/entities/user.entity';
 import { Booking } from './bookings/entities/booking.entity';
+import { Notification } from './notifications/entities/notification.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Booking } from './bookings/entities/booking.entity';
         username: config.get<string>('DB_USERNAME'),
         password: config.get<string>('DB_PASSWORD'),
         database: config.get<string>('DB_NAME', 'skillsync'),
-        entities: [User, Booking],
+        entities: [User, Booking, Notification],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
       }),
     }),

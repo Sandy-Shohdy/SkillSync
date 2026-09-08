@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useUnreadNotifications } from "../hooks/useUnreadNotifications";
 import defaultAvatar from "../assets/Profile.png";
 import settingIcon from "../assets/setting.png";
 import toggleIcon from "../assets/toggle.png";
@@ -9,6 +10,7 @@ import { resolveAvatarFallback } from "../data/categories";
 export default function SideRail() {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const hasUnread = useUnreadNotifications();
   const isDark = theme === "dark";
 
   return (
@@ -27,7 +29,7 @@ export default function SideRail() {
         <Link
           to={user ? "/profile" : "/login"}
           aria-label={user ? "View profile" : "Log in"}
-          className="rounded-lg transition hover:scale-105"
+          className="relative rounded-lg transition hover:scale-105"
         >
           <img
             src={
@@ -40,6 +42,12 @@ export default function SideRail() {
             alt={user ? `${user.name}'s profile` : "Log in"}
             className="w-10 h-10 rounded-lg object-cover border border-gray-300 dark:border-gray-700 transition hover:border-amber-500 dark:hover:border-amber-400"
           />
+          {hasUnread && (
+            <span
+              className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-red-500 border-2 border-white dark:border-gray-900"
+              aria-hidden="true"
+            />
+          )}
         </Link>
       </div>
 

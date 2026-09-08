@@ -5,6 +5,7 @@ import SideRail from "../../components/SideRail";
 import { useAuth } from "../../context/AuthContext";
 import {
   getMyBookingRequests,
+  markAllNotificationsRead,
   updateBookingStatus,
   type BookingRequest,
 } from "../../lib/api";
@@ -68,6 +69,11 @@ export default function BookingRequests() {
     return () => {
       cancelled = true;
     };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || user.role !== "freelancer") return;
+    markAllNotificationsRead(user.token).catch(() => {});
   }, [user]);
 
   const handleRespond = async (

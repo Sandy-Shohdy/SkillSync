@@ -243,3 +243,46 @@ export async function cancelBooking(
   });
   return parseJsonOrThrow<CustomerBooking>(response);
 }
+
+export type NotificationType =
+  | "booking_created"
+  | "booking_accepted"
+  | "booking_declined"
+  | "booking_cancelled";
+
+export interface AppNotification {
+  id: string;
+  type: NotificationType;
+  message: string;
+  bookingId: string | null;
+  read: boolean;
+  createdAt: string;
+}
+
+export async function getNotifications(
+  token: string,
+): Promise<AppNotification[]> {
+  const response = await fetch(`${API_URL}/notifications`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<AppNotification[]>(response);
+}
+
+export async function markNotificationRead(
+  token: string,
+  id: string,
+): Promise<AppNotification> {
+  const response = await fetch(`${API_URL}/notifications/${id}/read`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<AppNotification>(response);
+}
+
+export async function markAllNotificationsRead(token: string): Promise<void> {
+  const response = await fetch(`${API_URL}/notifications/read-all`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  await parseJsonOrThrow(response);
+}

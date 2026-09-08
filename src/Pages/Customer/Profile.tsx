@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
+import { useUnreadNotifications } from "../../hooks/useUnreadNotifications";
 import {
   categoryIconFromValue,
   categoryLabelFromValue,
@@ -11,6 +12,7 @@ import {
 
 export default function Profile() {
   const { user, logout } = useAuth();
+  const hasUnread = useUnreadNotifications();
 
   if (!user) {
     return (
@@ -127,7 +129,15 @@ export default function Profile() {
               to="/freelancer/bookings"
               className="block w-full mt-8 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold text-center hover:bg-amber-600 transition"
             >
-              Booking Requests
+              <span className="inline-flex items-center gap-1.5">
+                Booking Requests
+                {hasUnread && (
+                  <span
+                    className="w-2 h-2 rounded-full bg-red-500"
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
             </Link>
           )}
 
@@ -136,7 +146,15 @@ export default function Profile() {
               to="/bookings"
               className="block w-full mt-8 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold text-center hover:bg-amber-600 transition"
             >
-              My Bookings
+              <span className="inline-flex items-center gap-1.5">
+                My Bookings
+                {hasUnread && (
+                  <span
+                    className="w-2 h-2 rounded-full bg-red-500"
+                    aria-hidden="true"
+                  />
+                )}
+              </span>
             </Link>
           )}
 

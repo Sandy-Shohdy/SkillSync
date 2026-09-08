@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   cancelBooking,
   getMyBookings,
+  markAllNotificationsRead,
   resolveAssetUrl,
   type CustomerBooking,
 } from "../../lib/api";
@@ -72,6 +73,11 @@ export default function MyBookings() {
     return () => {
       cancelled = true;
     };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || user.role !== "customer") return;
+    markAllNotificationsRead(user.token).catch(() => {});
   }, [user]);
 
   const handleCancel = async (bookingId: string) => {
