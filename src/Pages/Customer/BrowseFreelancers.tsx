@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import FreelancerCard from "../../components/FreelancerCard";
 import BookingCard from "../../components/BookingCard";
+import CallbackRequestModal from "../../components/CallbackRequestModal";
 import AuthRequiredModal from "../../components/AuthRequiredModal";
 import FreelancerBookingBlockedModal from "../../components/FreelancerBookingBlockedModal";
 import { useAuth } from "../../context/AuthContext";
@@ -63,6 +64,8 @@ export default function BrowseFreelancers() {
 
   const [selectedFreelancer, setSelectedFreelancer] =
     useState<PublicFreelancer | null>(null);
+  const [callbackFreelancer, setCallbackFreelancer] =
+    useState<PublicFreelancer | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [showFreelancerBlocked, setShowFreelancerBlocked] = useState(false);
 
@@ -78,6 +81,20 @@ export default function BrowseFreelancers() {
     const freelancer =
       (freelancers ?? []).find((f) => f.id === freelancerId) ?? null;
     setSelectedFreelancer(freelancer);
+  };
+
+  const handleRequestCallback = (freelancerId: string) => {
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+    if (user.role === "freelancer") {
+      setShowFreelancerBlocked(true);
+      return;
+    }
+    const freelancer =
+      (freelancers ?? []).find((f) => f.id === freelancerId) ?? null;
+    setCallbackFreelancer(freelancer);
   };
 
   return (
@@ -146,6 +163,7 @@ export default function BrowseFreelancers() {
                 key={freelancer.id}
                 freelancer={freelancer}
                 onSelect={handleSelect}
+                onRequestCallback={handleRequestCallback}
               />
             ))}
           </div>
@@ -162,6 +180,22 @@ export default function BrowseFreelancers() {
               date,
               time,
               notes: notes || undefined,
+            })
+          }
+        />
+      )}
+
+      {callbackFreelancer && user && (
+        <CallbackRequestModal
+          freelancer={callbackFreelancer}
+          initialPhone={user.phone ?? undefined}
+          onClose={() => setCallbackFreelancer(null)}
+          onConfirm={({ phone, notes }) =>
+            createBooking(user.token, {
+              freelancerId: callbackFreelancer.id,
+              type: "inquiry",
+              phone,
+              notes,
             })
           }
         />

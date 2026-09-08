@@ -15,16 +15,27 @@ export enum BookingStatus {
   CANCELLED = 'cancelled',
 }
 
+export enum BookingType {
+  APPOINTMENT = 'appointment',
+  INQUIRY = 'inquiry',
+}
+
 @Entity('bookings')
 export class Booking {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'date' })
-  date: string;
+  @Column({ type: 'enum', enum: BookingType, default: BookingType.APPOINTMENT })
+  type: BookingType;
 
-  @Column()
-  time: string;
+  @Column({ type: 'date', nullable: true })
+  date?: string;
+
+  @Column({ nullable: true })
+  time?: string;
+
+  @Column({ nullable: true })
+  phone?: string;
 
   @Column({ type: 'text', nullable: true })
   notes?: string;

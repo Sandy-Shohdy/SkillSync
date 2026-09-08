@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Booking, BookingStatus } from './entities/booking.entity';
+import { Booking, BookingStatus, BookingType } from './entities/booking.entity';
 import { User, UserRole } from '../users/entities/user.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
@@ -14,8 +14,10 @@ import { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 function toBookingRequest(booking: Booking) {
   return {
     id: booking.id,
-    date: booking.date,
-    time: booking.time,
+    type: booking.type,
+    date: booking.date ?? null,
+    time: booking.time ?? null,
+    phone: booking.phone ?? null,
     notes: booking.notes ?? null,
     status: booking.status,
     createdAt: booking.createdAt,
@@ -31,8 +33,10 @@ function toBookingRequest(booking: Booking) {
 function toCustomerBooking(booking: Booking) {
   return {
     id: booking.id,
-    date: booking.date,
-    time: booking.time,
+    type: booking.type,
+    date: booking.date ?? null,
+    time: booking.time ?? null,
+    phone: booking.phone ?? null,
     notes: booking.notes ?? null,
     status: booking.status,
     createdAt: booking.createdAt,
@@ -67,8 +71,10 @@ export class BookingsService {
     const booking = this.bookingsRepository.create({
       freelancerId: freelancer.id,
       customerId,
+      type: dto.type ?? BookingType.APPOINTMENT,
       date: dto.date,
       time: dto.time,
+      phone: dto.phone,
       notes: dto.notes,
     });
     return this.bookingsRepository.save(booking);
@@ -78,7 +84,7 @@ export class BookingsService {
     const bookings = await this.bookingsRepository.find({
       where: { freelancerId },
       relations: ['customer'],
-      order: { date: 'ASC', time: 'ASC' },
+      order: { createdAt: 'DESC' },
     });
     return bookings.map(toBookingRequest);
   }
@@ -87,7 +93,7 @@ export class BookingsService {
     const bookings = await this.bookingsRepository.find({
       where: { customerId },
       relations: ['freelancer'],
-      order: { date: 'ASC', time: 'ASC' },
+      order: { createdAt: 'DESC' },
     });
     return bookings.map(toCustomerBooking);
   }

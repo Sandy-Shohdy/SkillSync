@@ -137,10 +137,14 @@ export async function getFreelancers(): Promise<PublicFreelancer[]> {
   return parseJsonOrThrow<PublicFreelancer[]>(response);
 }
 
+export type BookingType = "appointment" | "inquiry";
+
 export interface CreateBookingPayload {
   freelancerId: string;
-  date: string;
-  time: string;
+  type?: BookingType;
+  date?: string;
+  time?: string;
+  phone?: string;
   notes?: string;
 }
 
@@ -163,8 +167,10 @@ export type BookingStatus = "pending" | "accepted" | "declined" | "cancelled";
 
 export interface BookingRequest {
   id: string;
-  date: string;
-  time: string;
+  type: BookingType;
+  date: string | null;
+  time: string | null;
+  phone: string | null;
   notes: string | null;
   status: BookingStatus;
   createdAt: string;
@@ -187,8 +193,10 @@ export async function getMyBookingRequests(
 
 export interface CustomerBooking {
   id: string;
-  date: string;
-  time: string;
+  type: BookingType;
+  date: string | null;
+  time: string | null;
+  phone: string | null;
   notes: string | null;
   status: BookingStatus;
   createdAt: string;

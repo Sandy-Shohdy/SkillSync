@@ -8,11 +8,13 @@ import {
 interface FreelancerCardProps {
   freelancer: PublicFreelancer;
   onSelect: (freelancerId: string) => void;
+  onRequestCallback: (freelancerId: string) => void;
 }
 
 export default function FreelancerCard({
   freelancer,
   onSelect,
+  onRequestCallback,
 }: FreelancerCardProps) {
   const categoryLabel = categoryLabelFromValue(freelancer.category);
 
@@ -80,13 +82,24 @@ export default function FreelancerCard({
         ) : (
           <span />
         )}
-        <button
-          type="button"
-          onClick={() => onSelect(freelancer.id)}
-          className="px-4 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition shrink-0"
-        >
-          Book Now
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => onRequestCallback(freelancer.id)}
+            aria-label={`Request a call back from ${freelancer.fullName}`}
+            title="Request a call back"
+            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-amber-300 dark:hover:border-amber-700 hover:text-amber-700 dark:hover:text-amber-400 transition"
+          >
+            📞
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelect(freelancer.id)}
+            className="px-4 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition"
+          >
+            Book Now
+          </button>
+        </div>
       </div>
     </div>
   );

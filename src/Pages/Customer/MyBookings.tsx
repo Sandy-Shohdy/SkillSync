@@ -15,7 +15,8 @@ import {
   resolveAvatarFallback,
 } from "../../data/categories";
 
-function formatDate(date: string) {
+function formatDate(date: string | null) {
+  if (!date) return null;
   return new Date(`${date}T00:00:00`).toLocaleDateString(undefined, {
     weekday: "short",
     year: "numeric",
@@ -212,6 +213,11 @@ export default function MyBookings() {
                           <h3 className="text-gray-900 dark:text-white font-semibold">
                             {booking.freelancer.fullName}
                           </h3>
+                          {booking.type === "inquiry" && (
+                            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-400">
+                              📞 Call back
+                            </span>
+                          )}
                           <span
                             className={`px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_STYLES[booking.status]}`}
                           >
@@ -229,12 +235,20 @@ export default function MyBookings() {
                       </div>
                     </div>
                     <div className="sm:text-right shrink-0">
-                      <p className="text-gray-900 dark:text-white font-semibold">
-                        {formatDate(booking.date)}
-                      </p>
-                      <p className="text-amber-700 dark:text-amber-400 text-sm font-medium">
-                        {booking.time}
-                      </p>
+                      {booking.type === "inquiry" ? (
+                        <p className="text-gray-900 dark:text-white font-semibold text-sm">
+                          They'll call {booking.phone}
+                        </p>
+                      ) : (
+                        <>
+                          <p className="text-gray-900 dark:text-white font-semibold">
+                            {formatDate(booking.date)}
+                          </p>
+                          <p className="text-amber-700 dark:text-amber-400 text-sm font-medium">
+                            {booking.time}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                   {booking.notes && (
