@@ -67,8 +67,8 @@ export default function SideRail() {
           />
         </button>
 
-        <button
-          type="button"
+        <Link
+          to="/settings"
           aria-label="Settings"
           className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition hover:scale-105 cursor-pointer"
         >
@@ -77,7 +77,7 @@ export default function SideRail() {
             alt=""
             className="w-7 h-7 opacity-60  dark:opacity-70"
           />
-        </button>
+        </Link>
       </div>
     </aside>
   );

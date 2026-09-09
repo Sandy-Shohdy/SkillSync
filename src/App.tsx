@@ -8,6 +8,7 @@ import BrowseFreelancers from "./Pages/Customer/BrowseFreelancers.tsx";
 import Profile from "./Pages/Customer/Profile.tsx";
 import MyBookings from "./Pages/Customer/MyBookings.tsx";
 import EditProfile from "./Pages/EditProfile.tsx";
+import Settings from "./Pages/Settings.tsx";
 import BookingRequests from "./Pages/Freelancer/BookingRequests.tsx";
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="/freelancer/bookings" element={<BookingRequests />} />
             <Route path="/bookings" element={<MyBookings />} />
           </Routes>
