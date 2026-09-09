@@ -15,6 +15,13 @@ async function bootstrap() {
     }),
   );
   app.useStaticAssets(join(process.cwd(), 'uploads'), { prefix: '/uploads/' });
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+  console.log(`[main.ts] About to listen on port ${port}`);
+  await app.listen(port);
+  console.log(`[main.ts] Application listening on port ${port}`);
 }
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('[main.ts] Bootstrap failed:', error);
+  process.exit(1);
+});
+
