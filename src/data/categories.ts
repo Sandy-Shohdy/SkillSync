@@ -73,8 +73,6 @@ export function categoryIconFromValue(
   return CATEGORIES.find((c) => c.key === key)?.image;
 }
 
-// A freelancer's occupation icon stands in for their profile picture until
-// they upload a real photo; customers have no occupation, so no fallback.
 export function resolveAvatarFallback(
   avatarUrl: string | null | undefined,
   isFreelancer: boolean,
