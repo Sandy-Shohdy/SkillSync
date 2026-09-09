@@ -23,7 +23,7 @@ async function bootstrap() {
   }
   app.useStaticAssets(uploadsDir, { prefix: '/uploads/' });
   
-  const port = process.env.PORT ?? 3000;
+  const port = 3000;
   console.log(`[main.ts] About to listen on port ${port}`);
   
   const server = await app.listen(port, '0.0.0.0');
