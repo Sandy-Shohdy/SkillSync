@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import SideRail from "../components/SideRail";
+import AccessNotice from "../components/AccessNotice";
+import SkillsEditor from "../components/SkillsEditor";
 import defaultAvatar from "../assets/Profile.png";
 import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "../lib/api";
@@ -28,7 +30,6 @@ export default function EditProfile() {
     bio: user?.bio ?? "",
   });
   const [skills, setSkills] = useState<string[]>(user?.skills ?? []);
-  const [skillInput, setSkillInput] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -48,32 +49,11 @@ export default function EditProfile() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
-        <SideRail />
-        <Navbar />
-        <div className="max-w-md mx-auto px-4 py-20 text-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            Sign in to edit your profile
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            You need an account to access this page.
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <Link
-              to="/signup"
-              className="px-5 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition"
-            >
-              Sign Up
-            </Link>
-            <Link
-              to="/login"
-              className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-            >
-              Log In
-            </Link>
-          </div>
-        </div>
-      </div>
+      <AccessNotice
+        title="Sign in to edit your profile"
+        message="You need an account to access this page."
+        action="auth"
+      />
     );
   }
 
@@ -89,27 +69,6 @@ export default function EditProfile() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
     setAvatarFile(file);
-  };
-
-  const addSkill = () => {
-    const trimmed = skillInput.trim();
-    if (!trimmed) return;
-    const exists = skills.some(
-      (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
-    );
-    if (!exists) setSkills((prev) => [...prev, trimmed]);
-    setSkillInput("");
-  };
-
-  const removeSkill = (skill: string) => {
-    setSkills((prev) => prev.filter((s) => s !== skill));
-  };
-
-  const handleSkillKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      addSkill();
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,7 +134,6 @@ export default function EditProfile() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Profile picture */}
             <div className="flex items-center gap-4">
               <img
                 src={
@@ -205,7 +163,6 @@ export default function EditProfile() {
               </div>
             </div>
 
-            {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Full Name
@@ -220,7 +177,6 @@ export default function EditProfile() {
               />
             </div>
 
-            {/* Mobile Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Mobile Number
@@ -237,7 +193,6 @@ export default function EditProfile() {
 
             {isFreelancer && (
               <>
-                {/* Occupation */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Occupation / Service Type
@@ -277,7 +232,6 @@ export default function EditProfile() {
                   </div>
                 )}
 
-                {/* Location */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Location
@@ -293,7 +247,6 @@ export default function EditProfile() {
                   />
                 </div>
 
-                {/* Price per hour */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Price per Hour (SEK)
@@ -309,7 +262,6 @@ export default function EditProfile() {
                   />
                 </div>
 
-                {/* Bio */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Bio
@@ -325,57 +277,10 @@ export default function EditProfile() {
                   />
                 </div>
 
-                {/* Skills */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Skills
-                  </label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={skillInput}
-                      onChange={(e) => setSkillInput(e.target.value)}
-                      onKeyDown={handleSkillKeyDown}
-                      placeholder="e.g. Plumbing"
-                      className="flex-1 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                    />
-                    <button
-                      type="button"
-                      onClick={addSkill}
-                      className="px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  {skills.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {skills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-sm font-medium"
-                        >
-                          {skill}
-                          <button
-                            type="button"
-                            onClick={() => removeSkill(skill)}
-                            aria-label={`Remove ${skill}`}
-                            className="text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 dark:text-gray-500">
-                      Add at least one skill
-                    </p>
-                  )}
-                </div>
+                <SkillsEditor skills={skills} onChange={setSkills} />
               </>
             )}
 
-            {/* Error / Success */}
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400 text-center">
                 {error}
@@ -387,7 +292,6 @@ export default function EditProfile() {
               </p>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={submitting}

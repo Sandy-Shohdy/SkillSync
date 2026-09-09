@@ -38,14 +38,6 @@ export const CATEGORIES: CategoryDef[] = [
   { key: "other", label: "Other", image: otherIcon },
 ];
 
-export const CATEGORY_LABELS: Record<CategoryKey, string> = CATEGORIES.reduce(
-  (acc, category) => {
-    acc[category.key] = category.label;
-    return acc;
-  },
-  {} as Record<CategoryKey, string>,
-);
-
 export const BROWSE_FILTERS = [
   { key: "all", label: "All", icon: "✨" },
   ...CATEGORIES,

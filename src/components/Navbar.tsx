@@ -20,7 +20,6 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
   return (
     <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
-        {/* Logo */}
         <a href="/" className="flex items-center gap-2 shrink-0">
           <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
             <span className="text-gray-900 font-bold text-sm">S</span>
@@ -30,7 +29,6 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
           </span>
         </a>
 
-        {/* Search */}
         <div className="relative flex-1 min-w-[180px] order-3 sm:order-none w-full sm:w-auto">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
             🔍
@@ -47,7 +45,6 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
           />
         </div>
 
-        {/* Location */}
         <button
           type="button"
           className="flex items-center justify-center gap-1.5 w-10 h-10 md:w-auto md:px-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-600 dark:text-gray-300 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition shrink-0"

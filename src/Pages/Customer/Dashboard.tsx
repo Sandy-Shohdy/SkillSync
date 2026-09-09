@@ -6,8 +6,7 @@ import { CATEGORIES } from "../../data/categories";
 
 const STATS = [
   { value: "500+", label: "Verified pros" },
-  { value: "8", label: "Service categories" },
-  { value: "4.9★", label: "Average rating" },
+  { value: "9+", label: "Service categories" },
 ];
 
 export default function Dashboard() {
@@ -18,9 +17,7 @@ export default function Dashboard() {
       <SideRail />
       <Navbar />
 
-      {/* Intro */}
       <div className="relative overflow-hidden bg-gradient-to-b from-amber-50 via-amber-50 to-gray-50 dark:from-amber-900/10 dark:via-gray-950 dark:to-gray-950 border-b border-amber-100 dark:border-amber-900/40">
-        {/* Decorative glow blobs */}
         <div className="pointer-events-none absolute -top-24 -left-24 w-96 h-96 bg-amber-300/40 dark:bg-amber-500/10 rounded-full blur-3xl" />
         <div className="pointer-events-none absolute top-1/3 -right-24 w-96 h-96 bg-orange-300/30 dark:bg-orange-500/10 rounded-full blur-3xl" />
 
@@ -31,16 +28,16 @@ export default function Dashboard() {
             </span>
 
             <h1 className="mt-5 text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight text-gray-900 dark:text-white">
-              Skilled help,{" "}
+              Find the right pro,{" "}
               <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 bg-clip-text text-transparent">
-                minutes away.
+                close to home.
               </span>
             </h1>
 
             <p className="text-gray-600 dark:text-gray-300 text-base sm:text-lg mt-6 max-w-xl mx-auto lg:mx-0">
-              SkillSync connects you with vetted local pros — repair techs,
-              tutors, cleaners, and more. Browse services, compare ratings, and
-              book a time that works for you.
+              SkillSync connects you with local pros — repair techs, tutors,
+              cleaners, and more. Browse profiles, send a request, and book a
+              time that works for you.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mt-8">
@@ -58,7 +55,6 @@ export default function Dashboard() {
               </Link>
             </div>
 
-            {/* Stats */}
             <div className="flex items-center justify-center lg:justify-start gap-8 mt-10">
               {STATS.map((stat) => (
                 <div key={stat.label} className="text-center lg:text-left">
@@ -73,7 +69,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Category showcase */}
           <div className="flex-1 grid grid-cols-4 gap-3 sm:gap-4 max-w-sm w-full">
             {CATEGORIES.filter((c) => "image" in c).map((category, i) => (
               <div
@@ -92,14 +87,13 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Feature highlights */}
         <div className="relative border-t border-amber-100 dark:border-amber-900/40">
           <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
             {[
               { icon: "⚡", label: "Fast booking" },
               { icon: "💰", label: "Fair prices" },
               { icon: "🔒", label: "Secure payments" },
-              { icon: "⭐", label: "Top rated pros" },
+              { icon: "🔄", label: "Cancel anytime" },
             ].map((feature) => (
               <div
                 key={feature.label}

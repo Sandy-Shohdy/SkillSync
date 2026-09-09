@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
+import AccessNotice from "../../components/AccessNotice";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -15,39 +16,12 @@ import {
   categoryLabelFromValue,
   resolveAvatarFallback,
 } from "../../data/categories";
-
-function formatDate(date: string | null) {
-  if (!date) return null;
-  return new Date(`${date}T00:00:00`).toLocaleDateString(undefined, {
-    weekday: "short",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
-function formatRequestedAt(createdAt: string) {
-  return new Date(createdAt).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
-
-const STATUS_STYLES: Record<CustomerBooking["status"], string> = {
-  pending:
-    "bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400",
-  accepted:
-    "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400",
-  declined: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
-  cancelled: "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400",
-};
-
-const STATUS_LABELS: Record<CustomerBooking["status"], string> = {
-  pending: "Pending",
-  accepted: "Accepted",
-  declined: "Declined",
-  cancelled: "Cancelled",
-};
+import {
+  BOOKING_STATUS_LABELS,
+  BOOKING_STATUS_STYLES,
+  formatBookingDate,
+  formatRequestedAt,
+} from "../../lib/bookingDisplay";
 
 export default function MyBookings() {
   const { user } = useAuth();
@@ -101,55 +75,21 @@ export default function MyBookings() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
-        <SideRail />
-        <Navbar />
-        <div className="max-w-md mx-auto px-4 py-20 text-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            Sign in to view your bookings
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            You need a customer account to access this page.
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <Link
-              to="/signup"
-              className="px-5 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition"
-            >
-              Sign Up
-            </Link>
-            <Link
-              to="/login"
-              className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-            >
-              Log In
-            </Link>
-          </div>
-        </div>
-      </div>
+      <AccessNotice
+        title="Sign in to view your bookings"
+        message="You need a customer account to access this page."
+        action="auth"
+      />
     );
   }
 
   if (user.role !== "customer") {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
-        <SideRail />
-        <Navbar />
-        <div className="max-w-md mx-auto px-4 py-20 text-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            This page is for customers
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            Your account is set up as a freelancer.
-          </p>
-          <Link
-            to="/profile"
-            className="px-5 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition inline-block"
-          >
-            Back to Profile
-          </Link>
-        </div>
-      </div>
+      <AccessNotice
+        title="This page is for customers"
+        message="Your account is set up as a freelancer."
+        action="profile"
+      />
     );
   }
 
@@ -225,9 +165,9 @@ export default function MyBookings() {
                             </span>
                           )}
                           <span
-                            className={`px-2 py-0.5 rounded-full text-xs font-semibold ${STATUS_STYLES[booking.status]}`}
+                            className={`px-2 py-0.5 rounded-full text-xs font-semibold ${BOOKING_STATUS_STYLES[booking.status]}`}
                           >
-                            {STATUS_LABELS[booking.status]}
+                            {BOOKING_STATUS_LABELS[booking.status]}
                           </span>
                         </div>
                         <p className="text-gray-500 dark:text-gray-400 text-sm">
@@ -248,7 +188,7 @@ export default function MyBookings() {
                       ) : (
                         <>
                           <p className="text-gray-900 dark:text-white font-semibold">
-                            {formatDate(booking.date)}
+                            {formatBookingDate(booking.date)}
                           </p>
                           <p className="text-amber-700 dark:text-amber-400 text-sm font-medium">
                             {booking.time}

@@ -67,13 +67,6 @@ export async function login(
   return parseJsonOrThrow<AuthResponse>(response);
 }
 
-export async function getMe(token: string): Promise<ApiUser> {
-  const response = await fetch(`${API_URL}/users/me`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return parseJsonOrThrow<ApiUser>(response);
-}
-
 export interface UpdateProfilePayload {
   fullName?: string;
   phone?: string;

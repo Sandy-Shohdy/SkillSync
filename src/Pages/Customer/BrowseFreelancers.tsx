@@ -101,13 +101,9 @@ export default function BrowseFreelancers() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
       <SideRail />
 
-      {/* Sticky header group: navbar + category pills stack with zero gap,
-          since they're plain children of one sticky container rather than
-          independently-positioned elements. */}
       <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
         <Navbar searchValue={searchQuery} onSearchChange={setSearchQuery} />
 
-        {/* Category Pills */}
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center gap-2 overflow-x-auto border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
           {BROWSE_FILTERS.map((category) => {
             const isActive = category.key === activeCategory;
@@ -140,7 +136,6 @@ export default function BrowseFreelancers() {
         </div>
       </div>
 
-      {/* Listings */}
       <div className="max-w-6xl mx-auto px-4 py-6">
         {loadError ? (
           <p className="text-center text-red-600 dark:text-red-400 py-16">

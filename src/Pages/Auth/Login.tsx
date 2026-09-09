@@ -52,11 +52,8 @@ export default function Login() {
       <Navbar />
 
       <div className="flex items-center justify-center py-8 px-4 sm:py-12">
-        {/* Main Container */}
         <div className="w-full max-w-md">
-          {/* Card */}
           <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm">
-            {/* Header */}
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
@@ -72,9 +69,7 @@ export default function Login() {
               </p>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email Input */}
               <div>
                 <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wider">
                   Email
@@ -97,7 +92,6 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Password Input */}
               <div>
                 <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wider">
                   Password
@@ -134,7 +128,6 @@ export default function Login() {
                 </div>
               </div>
 
-              {/* Remember Me */}
               <div className="flex items-center justify-between text-sm pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -147,14 +140,12 @@ export default function Login() {
                 </label>
               </div>
 
-              {/* Error */}
               {error && (
                 <p className="text-sm text-red-600 dark:text-red-400 text-center">
                   {error}
                 </p>
               )}
 
-              {/* Sign In Button */}
               <button
                 type="submit"
                 disabled={submitting}
@@ -164,7 +155,6 @@ export default function Login() {
               </button>
             </form>
 
-            {/* Sign Up Link */}
             <p className="text-center text-gray-500 dark:text-gray-400 mt-6 text-sm">
               New to SkillSync?{" "}
               <a
@@ -176,7 +166,6 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Footer Text */}
           <p className="text-center text-gray-400 dark:text-gray-600 text-xs mt-6">
             🔒 Your data is encrypted and secure
           </p>

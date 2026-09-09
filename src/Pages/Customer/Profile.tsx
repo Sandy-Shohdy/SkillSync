@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
+import AccessNotice from "../../components/AccessNotice";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 import { useUnreadNotifications } from "../../hooks/useUnreadNotifications";
@@ -16,32 +17,11 @@ export default function Profile() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 sm:pl-16">
-        <SideRail />
-        <Navbar />
-        <div className="max-w-md mx-auto px-4 py-20 text-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-            You don't have a profile yet
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            Sign up or log in to see your profile.
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <Link
-              to="/signup"
-              className="px-5 py-2.5 rounded-xl bg-amber-500 text-gray-900 font-semibold hover:bg-amber-600 transition"
-            >
-              Sign Up
-            </Link>
-            <Link
-              to="/login"
-              className="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-            >
-              Log In
-            </Link>
-          </div>
-        </div>
-      </div>
+      <AccessNotice
+        title="You don't have a profile yet"
+        message="Sign up or log in to see your profile."
+        action="auth"
+      />
     );
   }
 

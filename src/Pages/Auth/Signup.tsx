@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
+import SkillsEditor from "../../components/SkillsEditor";
 import { useAuth, toAuthUser } from "../../context/AuthContext";
 import { signup as signupRequest } from "../../lib/api";
 import { CATEGORIES, type CategoryKey } from "../../data/categories";
@@ -24,7 +25,6 @@ export default function Signup() {
     bio: "",
   });
   const [skills, setSkills] = useState<string[]>([]);
-  const [skillInput, setSkillInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -45,27 +45,6 @@ export default function Signup() {
       ...prev,
       role,
     }));
-  };
-
-  const addSkill = () => {
-    const trimmed = skillInput.trim();
-    if (!trimmed) return;
-    const exists = skills.some(
-      (skill) => skill.toLowerCase() === trimmed.toLowerCase(),
-    );
-    if (!exists) setSkills((prev) => [...prev, trimmed]);
-    setSkillInput("");
-  };
-
-  const removeSkill = (skill: string) => {
-    setSkills((prev) => prev.filter((s) => s !== skill));
-  };
-
-  const handleSkillKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      addSkill();
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -130,7 +109,6 @@ export default function Signup() {
               SkillSync
             </h1>
           </div>
-          {/* Role Selection */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               I am a...
@@ -162,7 +140,6 @@ export default function Signup() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Full Name
@@ -178,7 +155,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Email
@@ -194,7 +170,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Password
@@ -210,7 +185,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Mobile Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Mobile Number
@@ -226,7 +200,6 @@ export default function Signup() {
               />
             </div>
 
-            {/* Occupation */}
             {formData.role === "freelancer" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -261,7 +234,6 @@ export default function Signup() {
               </div>
             )}
 
-            {/* Custom occupation (only when "Other" is selected) */}
             {formData.role === "freelancer" &&
               formData.occupation === "other" && (
                 <div>
@@ -280,7 +252,6 @@ export default function Signup() {
                 </div>
               )}
 
-            {/* Location (only for freelancers) */}
             {formData.role === "freelancer" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -298,7 +269,6 @@ export default function Signup() {
               </div>
             )}
 
-            {/* Price per hour (only for freelancers) */}
             {formData.role === "freelancer" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -316,7 +286,6 @@ export default function Signup() {
               </div>
             )}
 
-            {/* Bio (only for freelancers) */}
             {formData.role === "freelancer" && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -334,64 +303,16 @@ export default function Signup() {
               </div>
             )}
 
-            {/* Skills (only for freelancers) */}
             {formData.role === "freelancer" && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Skills
-                </label>
-                <div className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    value={skillInput}
-                    onChange={(e) => setSkillInput(e.target.value)}
-                    onKeyDown={handleSkillKeyDown}
-                    placeholder="e.g. Plumbing"
-                    className="flex-1 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
-                  />
-                  <button
-                    type="button"
-                    onClick={addSkill}
-                    className="px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-                  >
-                    Add
-                  </button>
-                </div>
-                {skills.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="flex items-center gap-1.5 pl-3 pr-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-400 text-sm font-medium"
-                      >
-                        {skill}
-                        <button
-                          type="button"
-                          onClick={() => removeSkill(skill)}
-                          aria-label={`Remove ${skill}`}
-                          className="text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    Add at least one skill
-                  </p>
-                )}
-              </div>
+              <SkillsEditor skills={skills} onChange={setSkills} />
             )}
 
-            {/* Error */}
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400 text-center">
                 {error}
               </p>
             )}
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={submitting}

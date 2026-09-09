@@ -32,6 +32,10 @@ function toBookingRequest(booking: Booking) {
   };
 }
 
+function bookingNoun(type: BookingType) {
+  return type === BookingType.INQUIRY ? 'call back request' : 'booking';
+}
+
 function toCustomerBooking(booking: Booking) {
   return {
     id: booking.id,
@@ -137,8 +141,7 @@ export class BookingsService {
     booking.status = accepted ? BookingStatus.ACCEPTED : BookingStatus.DECLINED;
     const saved = await this.bookingsRepository.save(booking);
 
-    const noun =
-      booking.type === BookingType.INQUIRY ? 'call back request' : 'booking';
+    const noun = bookingNoun(booking.type);
     await this.notificationsService.create(
       booking.customerId,
       accepted ? NotificationType.BOOKING_ACCEPTED : NotificationType.BOOKING_DECLINED,
@@ -170,8 +173,7 @@ export class BookingsService {
     booking.status = BookingStatus.CANCELLED;
     const saved = await this.bookingsRepository.save(booking);
 
-    const noun =
-      booking.type === BookingType.INQUIRY ? 'call back request' : 'booking';
+    const noun = bookingNoun(booking.type);
     await this.notificationsService.create(
       booking.freelancerId,
       NotificationType.BOOKING_CANCELLED,
