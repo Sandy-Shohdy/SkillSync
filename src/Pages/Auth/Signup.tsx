@@ -227,10 +227,6 @@ export default function Signup() {
                     className="w-11 h-11 shrink-0 object-contain rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-1.5"
                   />
                 </div>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
-                  This becomes your profile picture until you upload your own
-                  photo.
-                </p>
               </div>
             )}
 
