@@ -30,7 +30,14 @@ export default function Profile() {
       <SideRail />
       <Navbar />
       <div className="max-w-md mx-auto px-4 py-12">
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm text-center">
+        <div className="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm text-center">
+          <Link
+            to="/"
+            aria-label="Back to dashboard"
+            className="absolute left-4 top-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xl leading-none"
+          >
+            ←
+          </Link>
           <img
             src={
               resolveAvatarFallback(
