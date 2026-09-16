@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useUnreadNotifications } from "../hooks/useUnreadNotifications";
 import defaultAvatar from "../assets/Profile.png";
 import { resolveAvatarFallback } from "../data/categories";
+import settingIcon from "../assets/setting.png";
 
 interface NavbarProps {
   searchValue?: string;
@@ -57,6 +58,18 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
         <div className="sm:hidden shrink-0">
           <ThemeToggle />
         </div>
+
+        <Link
+          to="/settings"
+          aria-label="Settings"
+          className="sm:hidden shrink-0 flex items-center justify-center w-10 h-10 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        >
+          <img
+            src={settingIcon}
+            alt=""
+            className="w-5 h-5 opacity-60 dark:opacity-70"
+          />
+        </Link>
 
         <Link
           to={user ? "/profile" : "/login"}
