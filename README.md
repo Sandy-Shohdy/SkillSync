@@ -69,6 +69,36 @@ npm run start:dev
 
 The API starts on `http://localhost:3000`. In development (`NODE_ENV` ≠ `production`), TypeORM auto-creates the tables from the entities — no manual migrations needed.
 
+### Neon database only (no AI integration)
+
+The backend can use Neon as an ordinary PostgreSQL host through its existing
+TypeORM and `pg` driver. No Neon CLI, SDK, agent skills, MCP server, AI Gateway,
+or Neon Auth is required. The app keeps its own signup/login and JWT authentication.
+
+1. Open your project in the [Neon Console](https://console.neon.tech/) and use
+   **Connect** to copy the PostgreSQL connection string for the intended branch
+   and database. Keep its SSL parameters, including `sslmode=require`.
+2. Copy `backend/.env.example` to `backend/.env` if you do not already have one.
+   Set `DATABASE_URL` there privately, or in your backend host's environment
+   settings. When nonempty, this overrides the separate `DB_*` connection settings.
+3. Set a strong `JWT_SECRET` for the existing app login, then start the backend
+   from `backend/` as described above. For local development against a **new,
+   empty development database**, the existing TypeORM auto-sync creates the
+   tables. Never use development auto-sync on a database containing valuable
+   data. Production (`NODE_ENV=production`) still disables auto-sync and requires
+   the schema to be provisioned separately before the app is used.
+
+Only the backend should receive `DATABASE_URL`. Do not prefix it with `VITE_`,
+put it in frontend code, paste it into chat, or commit the real environment file.
+The frontend continues to use `VITE_API_URL` to reach the backend, not the database.
+Neon hosts the database, not the NestJS server; the backend still needs its own host.
+
+This configuration does not grant this assistant or an MCP server access to your
+database, and makes no AI Gateway requests. PostgreSQL access is still granted to
+your running backend through its database credentials. Review any previously
+authorized agents or integrations in your Neon account separately; changing app
+code does not revoke existing account permissions.
+
 **Frontend**
 
 ```bash
