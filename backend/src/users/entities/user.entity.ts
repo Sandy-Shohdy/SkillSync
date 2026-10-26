@@ -38,6 +38,14 @@ export class User {
   @Column({ nullable: true })
   avatarUrl?: string;
 
+  // Stored in Postgres because serverless hosts have no persistent disk.
+  // select: false keeps image bytes out of normal user queries.
+  @Column({ type: "bytea", nullable: true, select: false })
+  avatarData?: Buffer;
+
+  @Column({ type: "varchar", nullable: true, select: false })
+  avatarMimeType?: string;
+
   // Freelancer-only profile fields; left null for customers.
   @Column({ nullable: true })
   category?: string;

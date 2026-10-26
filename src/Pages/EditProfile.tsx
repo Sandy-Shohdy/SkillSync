@@ -9,6 +9,9 @@ import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "../lib/api";
 import { CATEGORIES, categoryKeyFromValue } from "../data/categories";
 
+// Matches the backend limit (kept under Vercel's 4.5 MB request cap).
+const MAX_AVATAR_BYTES = 4 * 1024 * 1024;
+
 function categoryImage(key: string) {
   return CATEGORIES.find((c) => c.key === key)?.image;
 }
@@ -68,6 +71,12 @@ export default function EditProfile() {
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
+    if (file && file.size > MAX_AVATAR_BYTES) {
+      setError("Profile photo must be 4 MB or smaller");
+      e.target.value = "";
+      return;
+    }
+    setError(null);
     setAvatarFile(file);
   };
 
@@ -156,7 +165,7 @@ export default function EditProfile() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   onChange={handleAvatarChange}
                   className="hidden"
                 />

@@ -127,6 +127,7 @@ All routes are prefixed with the API origin. Everything except signup, login, an
 | `POST /auth/login` | public | Verify credentials, returns a token |
 | `GET /freelancers` | public | Freelancer directory |
 | `GET /users/me` / `PATCH /users/me` | JWT | View/edit your own profile (avatar upload included) |
+| `GET /avatars/:userId` | public | Profile photo image |
 | `POST /bookings` | JWT, customer | Request an appointment or inquiry |
 | `GET /bookings/mine` | JWT, customer | Your own requests |
 | `GET /bookings/me` | JWT, freelancer | Requests addressed to you |
@@ -137,7 +138,10 @@ All routes are prefixed with the API origin. Everything except signup, login, an
 
 ## Deployment
 
-This project is set up to deploy as two separate services:
+This project deploys as two Vercel projects from the same repository, plus a Neon database. All three are on free plans.
 
 - **Frontend → Vercel.** Zero-config Vite build; `vercel.json` adds the SPA rewrite so client-side routes don't 404 on refresh. Set `VITE_API_URL` to the backend's public URL in the Vercel project's environment variables.
-- **Backend → Railway (or Render).** Runs as a normal long-running Node process, so local-disk avatar uploads keep working as-is (no serverless filesystem issues). Needs a Postgres instance and the same environment variables as local dev, plus `NODE_ENV=production` (which also turns off TypeORM's auto-sync, so the schema needs to be created once — see `backend/`).
+- **Backend → Vercel.** Import the same repository as a second Vercel project with **Root Directory** `backend`; Vercel detects NestJS and runs it as a serverless function. Set `DATABASE_URL`, `JWT_SECRET`, and `NODE_ENV=production`. Serverless functions have no persistent disk, so profile photos are stored in Postgres (`users.avatarData`) and served from `GET /avatars/:userId`, capped at 4 MB to stay under Vercel's request size limit.
+- **Database → Neon.** See [Neon database only](#neon-database-only-no-ai-integration) above.
+
+`NODE_ENV=production` turns off TypeORM's auto-sync, so production never alters the schema. After changing an entity, run the backend locally once in development mode against the database to apply the change before deploying.

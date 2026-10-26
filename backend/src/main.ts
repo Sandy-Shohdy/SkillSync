@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,15 +15,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  
-  // Ensure uploads directory exists
+
+  // Legacy disk avatars, served only where an uploads folder still exists
+  // (local dev). Serverless hosts are read-only; new avatars live in Postgres.
   const uploadsDir = join(process.cwd(), 'uploads');
-  if (!existsSync(uploadsDir)) {
-    mkdirSync(uploadsDir, { recursive: true });
+  if (existsSync(uploadsDir)) {
+    app.useStaticAssets(uploadsDir, { prefix: '/uploads/' });
   }
-  app.useStaticAssets(uploadsDir, { prefix: '/uploads/' });
-  
-  const port = 3000;
+
+  const port = Number(process.env.PORT) || 3000;
   console.log(`[main.ts] About to listen on port ${port}`);
   
   const server = await app.listen(port, '0.0.0.0');

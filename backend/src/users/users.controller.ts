@@ -13,14 +13,29 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { diskStorage } from 'multer';
-import { extname, join } from 'path';
+import { memoryStorage } from 'multer';
 import { User } from './entities/user.entity';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AuthedRequest, JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+// Kept under Vercel's 4.5 MB request body limit.
+export const MAX_AVATAR_BYTES = 4 * 1024 * 1024;
+
+// Raster formats only: SVG can carry scripts and is served from the API origin.
+const ALLOWED_AVATAR_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+];
+
 function toSafeUser(user: User) {
-  const { passwordHash: _passwordHash, ...safeUser } = user;
+  const {
+    passwordHash: _passwordHash,
+    avatarData: _avatarData,
+    avatarMimeType: _avatarMimeType,
+    ...safeUser
+  } = user;
   return safeUser;
 }
 
@@ -40,21 +55,20 @@ export class UsersController {
   @Patch('me')
   @UseInterceptors(
     FileInterceptor('avatar', {
-      storage: diskStorage({
-        destination: join(process.cwd(), 'uploads', 'avatars'),
-        filename: (_req, file, callback) => {
-          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-          callback(null, `${unique}${extname(file.originalname)}`);
-        },
-      }),
+      storage: memoryStorage(),
       fileFilter: (_req, file, callback) => {
-        if (!file.mimetype.startsWith('image/')) {
-          callback(new BadRequestException('Only image uploads are allowed'), false);
+        if (!ALLOWED_AVATAR_TYPES.includes(file.mimetype)) {
+          callback(
+            new BadRequestException(
+              'Profile photo must be a JPEG, PNG, WebP or GIF image',
+            ),
+            false,
+          );
           return;
         }
         callback(null, true);
       },
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: MAX_AVATAR_BYTES },
     }),
   )
   async updateMe(
@@ -71,7 +85,12 @@ export class UsersController {
     if (dto.pricePerHour !== undefined) user.pricePerHour = dto.pricePerHour;
     if (dto.skills !== undefined) user.skills = dto.skills;
     if (dto.location !== undefined) user.location = dto.location;
-    if (avatar) user.avatarUrl = `/uploads/avatars/${avatar.filename}`;
+    if (avatar) {
+      user.avatarData = avatar.buffer;
+      user.avatarMimeType = avatar.mimetype;
+      // Version query busts browser caches when the photo changes.
+      user.avatarUrl = `/avatars/${user.id}?v=${Date.now()}`;
+    }
 
     const saved = await this.usersRepository.save(user);
     return toSafeUser(saved);
