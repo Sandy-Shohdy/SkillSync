@@ -4,9 +4,9 @@ import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import AccessNotice from "../../components/AccessNotice";
 import { useAuth } from "../../context/AuthContext";
+import { useNotifications } from "../../hooks/useNotifications";
 import {
   getMyBookingRequests,
-  markAllNotificationsRead,
   markBookingCompleted,
   refundPayment,
   updateBookingStatus,
@@ -25,6 +25,7 @@ import {
 
 export default function BookingRequests() {
   const { user } = useAuth();
+  const { markAllRead } = useNotifications();
   const [bookings, setBookings] = useState<BookingRequest[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [respondingId, setRespondingId] = useState<string | null>(null);
@@ -53,8 +54,8 @@ export default function BookingRequests() {
 
   useEffect(() => {
     if (!user || user.role !== "freelancer") return;
-    markAllNotificationsRead(user.token).catch(() => {});
-  }, [user]);
+    markAllRead();
+  }, [user, markAllRead]);
 
   const handleRespond = async (
     bookingId: string,

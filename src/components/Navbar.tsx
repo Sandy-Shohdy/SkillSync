@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import NotificationBell from "./NotificationBell";
 import { useAuth } from "../context/AuthContext";
 import { useUnreadNotifications } from "../hooks/useUnreadNotifications";
 import defaultAvatar from "../assets/Profile.png";
@@ -19,7 +20,7 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
   const search = searchValue !== undefined ? searchValue : localSearch;
 
   return (
-    <header className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+    <header className="relative z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-center sm:justify-start gap-3">
         <a href="/" className="flex items-center gap-2 shrink-0">
           <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
@@ -53,6 +54,8 @@ export default function Navbar({ searchValue, onSearchChange }: NavbarProps) {
           <span>📍</span>
           <span className="hidden md:inline">Stockholm, Sweden</span>
         </button>
+
+        <NotificationBell />
 
         {/* Theme toggle & profile move to the side rail on sm+ screens */}
         <div className="sm:hidden shrink-0">

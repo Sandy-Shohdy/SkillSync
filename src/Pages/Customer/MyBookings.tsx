@@ -7,11 +7,11 @@ import PaymentModal from "../../components/PaymentModal";
 import ReportProblemModal from "../../components/ReportProblemModal";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
+import { useNotifications } from "../../hooks/useNotifications";
 import {
   cancelBooking,
   disputePayment,
   getMyBookings,
-  markAllNotificationsRead,
   payForBooking,
   releasePayment,
   resolveAssetUrl,
@@ -34,6 +34,7 @@ import {
 
 export default function MyBookings() {
   const { user } = useAuth();
+  const { markAllRead } = useNotifications();
   const [bookings, setBookings] = useState<CustomerBooking[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
@@ -71,8 +72,8 @@ export default function MyBookings() {
 
   useEffect(() => {
     if (!user || user.role !== "customer") return;
-    markAllNotificationsRead(user.token).catch(() => {});
-  }, [user]);
+    markAllRead();
+  }, [user, markAllRead]);
 
   const handleRelease = async (booking: CustomerBooking) => {
     if (!user || !booking.payment) return;
