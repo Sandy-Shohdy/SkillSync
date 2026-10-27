@@ -1,6 +1,6 @@
 # SkillSync
 
-SkillSync is a two-sided marketplace for local services. **Customers** browse freelancers by category, then either book a specific time slot or send a quick "call me back" inquiry. **Freelancers** get those requests in an inbox and accept, decline, or wait to be cancelled — with both sides seeing an in-app notification whenever the status changes.
+SkillSync is a two-sided marketplace for local services. **Customers** browse freelancers by category, then either book a specific time slot or send a quick "call me back" inquiry. **Freelancers** get those requests in an inbox and accept, decline, or wait to be cancelled. Once a booking is accepted, the customer pays up front; the money is held in escrow until the job is done, then released to the freelancer. Both sides see an in-app notification whenever anything changes.
 
 Categories covered out of the box: repairs, tutoring, food, beauty, garden, cleaning, photography, pet care, and other.
 
@@ -8,8 +8,10 @@ Categories covered out of the box: repairs, tutoring, food, beauty, garden, clea
 
 - **One account, two roles.** Signing up as a customer or a freelancer creates a row in the same `users` table — freelancer-only fields (category, hourly rate, skills, location, bio) just stay empty on a customer account.
 - **Two ways to request a freelancer.** An *appointment* books a specific date/time; an *inquiry* just asks the freelancer to call back — no time slot needed.
-- **A booking moves through one pipeline.** `pending` → `accepted` or `declined` by the freelancer, or cancelled by the customer at any point before it's closed.
-- **Notifications are pull, not push.** Every status change writes a notification row for the other side. There's no websocket or polling — the unread dot and the notification list are fetched fresh whenever that part of the app is opened.
+- **A booking moves through one pipeline.** `pending` → `accepted` or `declined` by the freelancer → `completed` once the job is done and paid out. The customer can cancel at any point before it's closed (a held payment is refunded automatically).
+- **Payments are held in escrow.** After a booking is accepted, the customer pays by card. SkillSync keeps a platform fee (`PLATFORM_FEE_PERCENT`, default 10%) and holds the rest. When the freelancer marks the job done, the customer can release the payment or report a problem; if they do nothing, it's released automatically after `PAYMENT_REVIEW_DAYS` (default 3). A reported problem gives the freelancer `PAYMENT_DISPUTE_DAYS` (default 14) to refund before the payment is released. Freelancers see their totals on the **Earnings** page. Amounts are in SEK.
+- **Payments are simulated.** The backend ships with a `MockPaymentProvider` — no real money moves. Use card `4242 4242 4242 4242` (any future expiry, any CVC) to succeed; `4000 0000 0000 0002` is declined and `4000 0000 0000 9995` fails with insufficient funds. To go live, bind a real provider (Stripe, Paymob, Klarna…) to the `PaymentProvider` token in `PaymentsModule`.
+- **Notifications are polled, not pushed.** Every status change writes a notification row for the other side. There's no websocket — the notification bell in the navbar refetches every 30 seconds and whenever the browser tab regains focus.
 - **Auth is a plain JWT.** Login/signup returns a 7-day token that the frontend keeps in `localStorage` and sends as `Authorization: Bearer <token>` on every request after that.
 
 ## Tech stack
@@ -18,6 +20,7 @@ Categories covered out of the box: repairs, tutoring, food, beauty, garden, clea
 |---|---|
 | **Frontend** | React 19, TypeScript, Vite, React Router, Tailwind CSS |
 | **Backend** | NestJS 10, TypeORM, PostgreSQL, JWT auth (bcrypt-hashed passwords), Multer (avatar uploads) |
+| **Hosting** | Vercel (frontend + backend), Neon (PostgreSQL) |
 
 The frontend talks to the backend over plain `fetch` calls — no GraphQL or client-side cache library, each page just fetches what it needs in a `useEffect`.
 
@@ -26,19 +29,37 @@ The frontend talks to the backend over plain `fetch` calls — no GraphQL or cli
 ```
 SkillSync/
 ├── src/                     # Frontend (Vite root)
-│   ├── Pages/               # Route-level pages (Auth, Customer, Freelancer, Settings...)
-│   ├── components/          # Shared UI (Navbar, SideRail, modals, cards...)
-│   ├── context/              # AuthContext, ThemeContext
-│   ├── hooks/                # useUnreadNotifications
-│   ├── lib/                  # api.ts (backend client), bookingDisplay.ts
-│   └── data/                  # Service category definitions
+│   ├── Pages/               # Route-level pages
+│   │   ├── Auth/            # Login, Signup
+│   │   ├── Customer/        # Dashboard, BrowseFreelancers, MyBookings, Profile
+│   │   ├── Freelancer/      # BookingRequests, Earnings
+│   │   └── EditProfile.tsx, Settings.tsx
+│   ├── components/          # Shared UI (Navbar, SideRail, NotificationBell, PaymentModal, cards, modals...)
+│   ├── context/             # AuthContext, NotificationsContext, ThemeContext
+│   ├── hooks/               # useNotifications, useUnreadNotifications
+│   ├── lib/                 # api.ts (backend client), bookingDisplay.ts
+│   └── data/                # Service category definitions
 └── backend/                 # NestJS API
     └── src/
-        ├── auth/             # Signup/login, JWT guard
-        ├── users/             # Profile + public freelancer directory
-        ├── bookings/          # Create/accept/decline/cancel bookings
-        └── notifications/     # Per-user notification inbox
+        ├── auth/            # Signup/login, JWT guard
+        ├── users/           # Profile, avatars, public freelancer directory
+        ├── bookings/        # Create/accept/decline/complete/cancel bookings
+        ├── payments/        # Escrow payments, refunds, earnings, auto-release cron
+        └── notifications/   # Per-user notification inbox
 ```
+
+### Frontend routes
+
+| Path | Who | Page |
+|---|---|---|
+| `/` | everyone | Dashboard |
+| `/services` | everyone | Browse freelancers by category |
+| `/login`, `/signup` | guests | Auth |
+| `/bookings` | customer | My bookings, payments, release/report a problem |
+| `/freelancer/bookings` | freelancer | Incoming booking requests |
+| `/freelancer/earnings` | freelancer | Held, released, and refunded earnings |
+| `/profile`, `/profile/edit` | signed in | View/edit your profile |
+| `/settings` | signed in | Settings and theme |
 
 ## Running it locally
 
@@ -51,16 +72,22 @@ cd backend
 npm install
 ```
 
-Create `backend/.env`:
+Copy `backend/.env.example` to `backend/.env` and fill it in:
 
 ```
 NODE_ENV=development
+DATABASE_URL=                 # optional, overrides DB_* (e.g. Neon)
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=<your postgres user>
 DB_PASSWORD=<your postgres password>
 DB_NAME=skillsync
 JWT_SECRET=<any random string>
+
+PLATFORM_FEE_PERCENT=10       # SkillSync's cut of each payment
+PAYMENT_REVIEW_DAYS=3         # auto-release after the job is marked done
+PAYMENT_DISPUTE_DAYS=14       # auto-release after a reported problem
+CRON_SECRET=                  # optional, protects GET /payments/auto-release
 ```
 
 ```bash
@@ -132,7 +159,14 @@ All routes are prefixed with the API origin. Everything except signup, login, an
 | `GET /bookings/mine` | JWT, customer | Your own requests |
 | `GET /bookings/me` | JWT, freelancer | Requests addressed to you |
 | `PATCH /bookings/:id/status` | JWT, freelancer | Accept or decline a request |
-| `PATCH /bookings/:id/cancel` | JWT, customer | Cancel your own request |
+| `PATCH /bookings/:id/complete` | JWT, freelancer | Mark the job done (starts the review window) |
+| `PATCH /bookings/:id/cancel` | JWT, customer | Cancel your own request (refunds a held payment) |
+| `POST /payments/bookings/:id/pay` | JWT, customer | Pay for an accepted booking (held in escrow) |
+| `POST /payments/bookings/:id/release` | JWT, customer | Release the held payment to the freelancer |
+| `POST /payments/bookings/:id/dispute` | JWT, customer | Report a problem with the job |
+| `POST /payments/bookings/:id/refund` | JWT, freelancer | Refund the customer and cancel the booking |
+| `GET /payments/earnings` | JWT, freelancer | Earnings summary and payment history |
+| `GET /payments/auto-release` | `CRON_SECRET` | Release overdue payments (for a scheduled job) |
 | `GET /notifications` | JWT | Your notification inbox |
 | `PATCH /notifications/:id/read`, `PATCH /notifications/read-all` | JWT | Mark notifications read |
 
