@@ -46,15 +46,29 @@ export const BROWSE_FILTERS = [
 export function categoryKeyFromValue(
   category: string | null | undefined,
 ): CategoryKey {
-  const match = CATEGORIES.find((c) => c.key === category);
-  return match ? match.key : "other";
+  if (!category) return "other";
+  const normalized = category.trim().toLowerCase();
+  const match = CATEGORIES.find(
+    (c) =>
+      c.key.toLowerCase() === normalized ||
+      c.label.toLowerCase() === normalized,
+  );
+  if (match) return match.key;
+  if (normalized === "plumbing") return "repairs";
+  if (normalized === "makeup artist" || normalized === "makeup") return "beauty";
+  return "other";
 }
 
 export function categoryLabelFromValue(
   category: string | null | undefined,
 ): string {
   if (!category) return "";
-  const match = CATEGORIES.find((c) => c.key === category);
+  const normalized = category.trim().toLowerCase();
+  const match = CATEGORIES.find(
+    (c) =>
+      c.key.toLowerCase() === normalized ||
+      c.label.toLowerCase() === normalized,
+  );
   return match ? match.label : category;
 }
 
