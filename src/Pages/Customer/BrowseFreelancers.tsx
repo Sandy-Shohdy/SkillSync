@@ -169,11 +169,12 @@ export default function BrowseFreelancers() {
         <BookingCard
           freelancer={selectedFreelancer}
           onClose={() => setSelectedFreelancer(null)}
-          onConfirm={({ date, time, notes }) =>
+          onConfirm={({ date, time, hours, notes }) =>
             createBooking(user.token, {
               freelancerId: selectedFreelancer.id,
               date,
               time,
+              hours,
               notes: notes || undefined,
             })
           }

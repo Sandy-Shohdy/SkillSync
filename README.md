@@ -142,6 +142,7 @@ This project deploys as two Vercel projects from the same repository, plus a Neo
 
 - **Frontend → Vercel.** Zero-config Vite build; `vercel.json` adds the SPA rewrite so client-side routes don't 404 on refresh. Set `VITE_API_URL` to the backend's public URL in the Vercel project's environment variables.
 - **Backend → Vercel.** Import the same repository as a second Vercel project with **Root Directory** `backend`; Vercel detects NestJS and runs it as a serverless function. Set `DATABASE_URL`, `JWT_SECRET`, and `NODE_ENV=production`. Serverless functions have no persistent disk, so profile photos are stored in Postgres (`users.avatarData`) and served from `GET /avatars/:userId`, capped at 4 MB to stay under Vercel's request size limit.
+- **Payment auto-release.** Held payments are released to the freelancer `PAYMENT_REVIEW_DAYS` (default 3) after the job is marked done, or `PAYMENT_DISPUTE_DAYS` (default 14) after the customer reports a problem. Overdue payments are released whenever bookings or earnings are loaded. To also release them when nobody uses the app, set `CRON_SECRET` and add a Vercel Cron Job for `GET /payments/auto-release` (Vercel sends the secret automatically).
 - **Database → Neon.** See [Neon database only](#neon-database-only-no-ai-integration) above.
 
 `NODE_ENV=production` turns off TypeORM's auto-sync, so production never alters the schema. After changing an entity, run the backend locally once in development mode against the database to apply the change before deploying.

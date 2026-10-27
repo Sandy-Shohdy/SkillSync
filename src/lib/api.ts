@@ -137,6 +137,7 @@ export interface CreateBookingPayload {
   type?: BookingType;
   date?: string;
   time?: string;
+  hours?: number;
   phone?: string;
   notes?: string;
 }
@@ -156,9 +157,41 @@ export async function createBooking(
   await parseJsonOrThrow(response);
 }
 
-export type BookingStatus = "pending" | "accepted" | "declined" | "cancelled";
+export type BookingStatus =
+  | "pending"
+  | "accepted"
+  | "declined"
+  | "cancelled"
+  | "completed";
 
-export interface BookingRequest {
+export type PaymentStatus = "held" | "disputed" | "released" | "refunded";
+
+// Amounts are in minor units (öre).
+export interface PaymentSummary {
+  id: string;
+  status: PaymentStatus;
+  amount: number;
+  platformFee: number;
+  freelancerAmount: number;
+  currency: string;
+  cardLast4: string;
+  createdAt: string;
+  autoReleaseAt: string | null;
+  disputedAt: string | null;
+  disputeReason: string | null;
+  releasedAt: string | null;
+  refundedAt: string | null;
+}
+
+interface BookingPricing {
+  hours: number | null;
+  amount: number | null;
+  currency: string;
+  workCompletedAt: string | null;
+  payment: PaymentSummary | null;
+}
+
+export interface BookingRequest extends BookingPricing {
   id: string;
   type: BookingType;
   date: string | null;
@@ -184,7 +217,7 @@ export async function getMyBookingRequests(
   return parseJsonOrThrow<BookingRequest[]>(response);
 }
 
-export interface CustomerBooking {
+export interface CustomerBooking extends BookingPricing {
   id: string;
   type: BookingType;
   date: string | null;
@@ -237,11 +270,123 @@ export async function cancelBooking(
   return parseJsonOrThrow<CustomerBooking>(response);
 }
 
+export async function markBookingCompleted(
+  token: string,
+  bookingId: string,
+): Promise<BookingRequest> {
+  const response = await fetch(`${API_URL}/bookings/${bookingId}/complete`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<BookingRequest>(response);
+}
+
+export interface PayBookingPayload {
+  cardholderName: string;
+  cardNumber: string;
+  expiry: string;
+  cvc: string;
+}
+
+export async function payForBooking(
+  token: string,
+  bookingId: string,
+  payload: PayBookingPayload,
+): Promise<PaymentSummary> {
+  const response = await fetch(
+    `${API_URL}/payments/bookings/${bookingId}/pay`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+  return parseJsonOrThrow<PaymentSummary>(response);
+}
+
+export async function releasePayment(
+  token: string,
+  bookingId: string,
+): Promise<PaymentSummary> {
+  const response = await fetch(
+    `${API_URL}/payments/bookings/${bookingId}/release`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  return parseJsonOrThrow<PaymentSummary>(response);
+}
+
+export async function disputePayment(
+  token: string,
+  bookingId: string,
+  reason: string,
+): Promise<PaymentSummary> {
+  const response = await fetch(
+    `${API_URL}/payments/bookings/${bookingId}/dispute`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ reason }),
+    },
+  );
+  return parseJsonOrThrow<PaymentSummary>(response);
+}
+
+export async function refundPayment(
+  token: string,
+  bookingId: string,
+): Promise<PaymentSummary> {
+  const response = await fetch(
+    `${API_URL}/payments/bookings/${bookingId}/refund`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    },
+  );
+  return parseJsonOrThrow<PaymentSummary>(response);
+}
+
+export interface EarningsPayment extends PaymentSummary {
+  bookingId: string;
+  bookingDate: string | null;
+  bookingTime: string | null;
+  hours: number | null;
+  customerName: string;
+}
+
+export interface Earnings {
+  currency: string;
+  feePercent: number;
+  held: number;
+  released: number;
+  payments: EarningsPayment[];
+}
+
+export async function getEarnings(token: string): Promise<Earnings> {
+  const response = await fetch(`${API_URL}/payments/earnings`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return parseJsonOrThrow<Earnings>(response);
+}
+
 export type NotificationType =
   | "booking_created"
   | "booking_accepted"
   | "booking_declined"
-  | "booking_cancelled";
+  | "booking_cancelled"
+  | "payment_received"
+  | "work_completed"
+  | "payment_released"
+  | "payment_disputed"
+  | "payment_refunded";
 
 export interface AppNotification {
   id: string;

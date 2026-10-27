@@ -8,6 +8,8 @@ import { BookingsModule } from './bookings/bookings.module';
 import { User } from './users/entities/user.entity';
 import { Booking } from './bookings/entities/booking.entity';
 import { Notification } from './notifications/entities/notification.entity';
+import { Payment } from './payments/entities/payment.entity';
+import { PaymentsModule } from './payments/payments.module';
 
 // Accepts a bare URL or Neon's copied `psql 'postgresql://...'` command.
 function resolveDatabaseUrl(raw: string | undefined): string | undefined {
@@ -46,13 +48,14 @@ function resolveDatabaseUrl(raw: string | undefined): string | undefined {
                 password: config.get<string>('DB_PASSWORD'),
                 database: config.get<string>('DB_NAME', 'skillsync'),
               }),
-          entities: [User, Booking, Notification],
+          entities: [User, Booking, Notification, Payment],
           synchronize: config.get<string>('NODE_ENV') !== 'production',
         };
       },
     }),
     AuthModule,
     BookingsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,12 +3,17 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import SideRail from "../../components/SideRail";
 import AccessNotice from "../../components/AccessNotice";
+import PaymentModal from "../../components/PaymentModal";
+import ReportProblemModal from "../../components/ReportProblemModal";
 import defaultAvatar from "../../assets/Profile.png";
 import { useAuth } from "../../context/AuthContext";
 import {
   cancelBooking,
+  disputePayment,
   getMyBookings,
   markAllNotificationsRead,
+  payForBooking,
+  releasePayment,
   resolveAssetUrl,
   type CustomerBooking,
 } from "../../lib/api";
@@ -19,7 +24,11 @@ import {
 import {
   BOOKING_STATUS_LABELS,
   BOOKING_STATUS_STYLES,
+  PAYMENT_STATUS_LABELS,
+  PAYMENT_STATUS_STYLES,
   formatBookingDate,
+  formatDeadline,
+  formatMoney,
   formatRequestedAt,
 } from "../../lib/bookingDisplay";
 
@@ -29,6 +38,17 @@ export default function MyBookings() {
   const [error, setError] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [cancelError, setCancelError] = useState<string | null>(null);
+  const [payingBooking, setPayingBooking] = useState<CustomerBooking | null>(
+    null,
+  );
+  const [releasingId, setReleasingId] = useState<string | null>(null);
+  const [reportingBooking, setReportingBooking] =
+    useState<CustomerBooking | null>(null);
+
+  const refreshBookings = async () => {
+    if (!user) return;
+    setBookings(await getMyBookings(user.token));
+  };
 
   useEffect(() => {
     if (!user || user.role !== "customer") return;
@@ -54,9 +74,36 @@ export default function MyBookings() {
     markAllNotificationsRead(user.token).catch(() => {});
   }, [user]);
 
-  const handleCancel = async (bookingId: string) => {
+  const handleRelease = async (booking: CustomerBooking) => {
+    if (!user || !booking.payment) return;
+    if (
+      !window.confirm(
+        `Release ${formatMoney(booking.payment.amount, booking.currency)} to ${booking.freelancer.fullName}? Only do this once the job is done. It can't be undone.`,
+      )
+    )
+      return;
+    setCancelError(null);
+    setReleasingId(booking.id);
+    try {
+      await releasePayment(user.token, booking.id);
+      await refreshBookings();
+    } catch (err) {
+      setCancelError(
+        err instanceof Error ? err.message : "Something went wrong",
+      );
+    } finally {
+      setReleasingId(null);
+    }
+  };
+
+  const handleCancel = async (booking: CustomerBooking) => {
     if (!user) return;
-    if (!window.confirm("Cancel this booking?")) return;
+    const bookingId = booking.id;
+    const message =
+      booking.payment?.status === "held"
+        ? `Cancel this booking? You'll be refunded ${formatMoney(booking.payment.amount, booking.currency)}.`
+        : "Cancel this booking?";
+    if (!window.confirm(message)) return;
     setCancelError(null);
     setCancellingId(bookingId);
     try {
@@ -202,16 +249,103 @@ export default function MyBookings() {
                       {booking.notes}
                     </p>
                   )}
+                  {booking.amount != null && (
+                    <div className="flex items-center justify-between gap-2 flex-wrap mt-3 border-t border-gray-100 dark:border-gray-800 pt-3">
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        {booking.hours} h ·{" "}
+                        <span className="font-semibold text-gray-900 dark:text-white">
+                          {formatMoney(booking.amount, booking.currency)}
+                        </span>
+                      </p>
+                      {booking.payment ? (
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-xs font-semibold ${PAYMENT_STATUS_STYLES[booking.payment.status]}`}
+                        >
+                          {PAYMENT_STATUS_LABELS[booking.payment.status]} ·
+                          card •••• {booking.payment.cardLast4}
+                        </span>
+                      ) : booking.status === "pending" ? (
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Pay after the freelancer accepts
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
+
+                  {booking.payment?.status === "held" &&
+                    booking.workCompletedAt && (
+                      <p className="text-sm mt-3 rounded-lg px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300">
+                        {booking.freelancer.fullName} marked this job as done.
+                        Release the payment if you're happy, or report a
+                        problem.
+                        {booking.payment.autoReleaseAt &&
+                          ` If you do neither, it's released automatically on ${formatDeadline(booking.payment.autoReleaseAt)}.`}
+                      </p>
+                    )}
+
+                  {booking.payment?.status === "disputed" && (
+                    <div className="text-sm mt-3 rounded-lg px-3 py-2 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300">
+                      <p>
+                        You reported a problem: "{booking.payment.disputeReason}"
+                      </p>
+                      <p className="mt-1">
+                        {booking.freelancer.fullName} can fix it or refund you.
+                        {booking.payment.autoReleaseAt &&
+                          ` If it isn't resolved, the payment is released to them on ${formatDeadline(booking.payment.autoReleaseAt)}.`}
+                      </p>
+                    </div>
+                  )}
+
                   <p className="text-gray-400 dark:text-gray-500 text-xs mt-3">
                     Requested {formatRequestedAt(booking.createdAt)}
                   </p>
 
+                  {booking.status === "accepted" &&
+                    booking.amount != null &&
+                    !booking.payment && (
+                      <button
+                        type="button"
+                        onClick={() => setPayingBooking(booking)}
+                        className="w-full mt-3 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition"
+                      >
+                        Pay {formatMoney(booking.amount, booking.currency)}
+                      </button>
+                    )}
+
+                  {booking.status === "accepted" &&
+                    (booking.payment?.status === "held" ||
+                      booking.payment?.status === "disputed") && (
+                      <button
+                        type="button"
+                        disabled={releasingId === booking.id}
+                        onClick={() => handleRelease(booking)}
+                        className="w-full mt-3 py-2 rounded-lg bg-amber-500 text-gray-900 text-sm font-semibold hover:bg-amber-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {releasingId === booking.id
+                          ? "Releasing..."
+                          : "Job done: release payment"}
+                      </button>
+                    )}
+
+                  {booking.status === "accepted" &&
+                    booking.payment?.status === "held" &&
+                    booking.workCompletedAt && (
+                      <button
+                        type="button"
+                        onClick={() => setReportingBooking(booking)}
+                        className="w-full mt-3 py-2 rounded-lg border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 text-sm font-semibold hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                      >
+                        Report a problem
+                      </button>
+                    )}
+
                   {(booking.status === "pending" ||
-                    booking.status === "accepted") && (
+                    booking.status === "accepted") &&
+                    !booking.workCompletedAt && (
                     <button
                       type="button"
                       disabled={cancellingId === booking.id}
-                      onClick={() => handleCancel(booking.id)}
+                      onClick={() => handleCancel(booking)}
                       className="w-full mt-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {cancellingId === booking.id
@@ -225,6 +359,30 @@ export default function MyBookings() {
           </div>
         )}
       </div>
+
+      {payingBooking && payingBooking.amount != null && (
+        <PaymentModal
+          amount={payingBooking.amount}
+          currency={payingBooking.currency}
+          freelancerName={payingBooking.freelancer.fullName}
+          onClose={() => setPayingBooking(null)}
+          onPay={async (payload) => {
+            await payForBooking(user.token, payingBooking.id, payload);
+            await refreshBookings().catch(() => {});
+          }}
+        />
+      )}
+
+      {reportingBooking && (
+        <ReportProblemModal
+          freelancerName={reportingBooking.freelancer.fullName}
+          onClose={() => setReportingBooking(null)}
+          onSubmit={async (reason) => {
+            await disputePayment(user.token, reportingBooking.id, reason);
+            await refreshBookings().catch(() => {});
+          }}
+        />
+      )}
     </div>
   );
 }

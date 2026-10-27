@@ -1,11 +1,14 @@
 import {
   IsDateString,
   IsEnum,
+  IsInt,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
+  Min,
 } from "class-validator";
 import { BookingType } from "../entities/booking.entity";
 
@@ -26,6 +29,13 @@ export class CreateBookingDto {
     message: "time must be in HH:MM format",
   })
   time?: string;
+
+  // Required for appointments; used to price the booking.
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(12)
+  hours?: number;
 
   @IsOptional()
   @IsString()

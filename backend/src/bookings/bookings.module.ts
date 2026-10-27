@@ -6,12 +6,14 @@ import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 import { JwtConfigModule } from '../auth/jwt-config.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Booking, User]),
     JwtConfigModule,
     NotificationsModule,
+    PaymentsModule,
   ],
   controllers: [BookingsController],
   providers: [BookingsService],

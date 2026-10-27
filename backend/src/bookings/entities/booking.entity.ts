@@ -4,15 +4,18 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Payment } from '../../payments/entities/payment.entity';
 
 export enum BookingStatus {
   PENDING = 'pending',
   ACCEPTED = 'accepted',
   DECLINED = 'declined',
   CANCELLED = 'cancelled',
+  COMPLETED = 'completed',
 }
 
 export enum BookingType {
@@ -56,6 +59,21 @@ export class Booking {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'customerId' })
   customer: User;
+
+  @Column({ type: 'int', nullable: true })
+  hours?: number | null;
+
+  // Total price in minor units (öre), fixed when the booking is created.
+  @Column({ type: 'int', nullable: true })
+  amount?: number | null;
+
+  // Set when the freelancer marks the work as done; the customer then
+  // releases the held payment.
+  @Column({ type: 'timestamptz', nullable: true })
+  workCompletedAt?: Date | null;
+
+  @OneToOne(() => Payment, (payment) => payment.booking)
+  payment?: Payment | null;
 
   @CreateDateColumn()
   createdAt: Date;

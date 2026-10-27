@@ -10,6 +10,11 @@ export enum NotificationType {
   BOOKING_ACCEPTED = 'booking_accepted',
   BOOKING_DECLINED = 'booking_declined',
   BOOKING_CANCELLED = 'booking_cancelled',
+  PAYMENT_RECEIVED = 'payment_received',
+  WORK_COMPLETED = 'work_completed',
+  PAYMENT_RELEASED = 'payment_released',
+  PAYMENT_DISPUTED = 'payment_disputed',
+  PAYMENT_REFUNDED = 'payment_refunded',
 }
 
 @Entity('notifications')

@@ -10,6 +10,7 @@ import MyBookings from "./Pages/Customer/MyBookings.tsx";
 import EditProfile from "./Pages/EditProfile.tsx";
 import Settings from "./Pages/Settings.tsx";
 import BookingRequests from "./Pages/Freelancer/BookingRequests.tsx";
+import Earnings from "./Pages/Freelancer/Earnings.tsx";
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/freelancer/bookings" element={<BookingRequests />} />
+            <Route path="/freelancer/earnings" element={<Earnings />} />
             <Route path="/bookings" element={<MyBookings />} />
           </Routes>
         </BrowserRouter>

@@ -55,6 +55,14 @@ export class BookingsController {
     return this.bookingsService.updateStatus(req.user.sub, id, dto);
   }
 
+  @Patch(':id/complete')
+  complete(@Req() req: AuthedRequest, @Param('id') id: string) {
+    if (req.user.role !== 'freelancer') {
+      throw new ForbiddenException('Only freelancers can mark jobs as done');
+    }
+    return this.bookingsService.markCompleted(req.user.sub, id);
+  }
+
   @Patch(':id/cancel')
   cancel(@Req() req: AuthedRequest, @Param('id') id: string) {
     if (req.user.role !== 'customer') {
